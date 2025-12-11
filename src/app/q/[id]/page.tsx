@@ -165,10 +165,11 @@ export default function QuestionnairePage() {
                 
                 <div className="space-y-2 flex-1">
                     <Textarea
-                        className="w-full h-48 p-5 rounded-xl border border-christmas-red/30 focus:border-christmas-red focus:ring-1 focus:ring-christmas-red bg-[#1D3557]/90 resize-none text-2xl placeholder:text-gray-500 placeholder:text-lg text-white leading-relaxed"
-                        placeholder="올 한 해도 고생했어! 내년에도 함께하자 ❤️"
+                        className="w-full h-48 p-5 rounded-xl border border-christmas-red/30 focus:border-christmas-red focus:ring-1 focus:ring-christmas-red bg-[#1D3557]/90 resize-none text-xl placeholder:text-gray-500 placeholder:text-xl text-white leading-relaxed"
+                        placeholder="올 한 해도 고생했어! 내년에도 함께하자"
                         value={warmMessage}
                         maxLength={MAX_MESSAGE_LENGTH}
+                        name="warmMessage"
                         onChange={(e) => setWarmMessage(e.target.value)}
                     />
                     <div className="flex justify-between items-center">
