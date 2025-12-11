@@ -17,8 +17,8 @@ export default function RootLayout({
     <html lang="ko">
       <body className="antialiased bg-background text-foreground">
         <MSWProvider>
-            {children}
-            <Toaster position="top-center" />
+          {children}
+          <Toaster position="top-center" />
         </MSWProvider>
       </body>
     </html>

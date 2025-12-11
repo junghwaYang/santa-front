@@ -7,7 +7,10 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+  --font-sans:
+    "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue",
+    "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
   --font-mono: var(--font-geist-mono);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -42,7 +45,7 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
-  
+
   /* Custom Christmas Colors */
   --color-christmas-red: var(--christmas-red);
   --color-forest-green: var(--forest-green);
@@ -55,106 +58,106 @@
 
 :root {
   --radius: 0.625rem;
-  
+
   /* Brand Colors */
-  --christmas-red: #E63946; /* slightly brighter red for dark bg */
-  --forest-green: #2A9D8F; /* teal-ish green for contrast */
-  --gold: #FFD700;
-  --snow-white: #F1FAEE;
-  --cream: #1D3557; /* Deep Navy for cards */
-  --light-red: #457B9D; /* Muted blue for secondary backgrounds */
-  --dark-navy: #0B132B; /* Very dark navy for main bg */
-  
+  --christmas-red: #e63946; /* slightly brighter red for dark bg */
+  --forest-green: #2a9d8f; /* teal-ish green for contrast */
+  --gold: #ffd700;
+  --snow-white: #f1faee;
+  --cream: #1d3557; /* Deep Navy for cards */
+  --light-red: #457b9d; /* Muted blue for secondary backgrounds */
+  --dark-navy: #0b132b; /* Very dark navy for main bg */
+
   /* Theme Map - "Snowy Night" Default */
   --background: var(--dark-navy);
   --foreground: var(--snow-white);
-  
+
   --card: var(--cream);
   --card-foreground: var(--snow-white);
-  
+
   --popover: var(--cream);
   --popover-foreground: var(--snow-white);
-  
+
   --primary: var(--christmas-red);
-  --primary-foreground: #FFFFFF;
-  
+  --primary-foreground: #ffffff;
+
   --secondary: var(--forest-green);
-  --secondary-foreground: #FFFFFF;
-  
-  --muted: #457B9D;
-  --muted-foreground: #A8DADC; /* Light blue-grey for secondary text */
-  
+  --secondary-foreground: #ffffff;
+
+  --muted: #457b9d;
+  --muted-foreground: #a8dadc; /* Light blue-grey for secondary text */
+
   --accent: var(--gold);
-  --accent-foreground: #0B132B;
-  
-  --destructive: #EF5350;
-  --destructive-foreground: #FFFFFF;
-  
-  --border: #457B9D;
-  --input: #1D3557;
+  --accent-foreground: #0b132b;
+
+  --destructive: #ef5350;
+  --destructive-foreground: #ffffff;
+
+  --border: #457b9d;
+  --input: #1d3557;
   --ring: var(--gold);
-  
+
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
-  
+
   --sidebar: var(--dark-navy);
   --sidebar-foreground: var(--snow-white);
   --sidebar-primary: var(--christmas-red);
-  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: var(--cream);
   --sidebar-accent-foreground: var(--christmas-red);
-  --sidebar-border: #457B9D;
+  --sidebar-border: #457b9d;
   --sidebar-ring: var(--gold);
 }
 
 .dark {
   /* Dark mode overrides - keeping user preferences for now but mapping to dark equivalents if needed */
   /* For now, just roughly inverting or using the Dark Navy logic */
-  --background: #121212; 
-  --foreground: #FFFFFF;
-  
-  --card: #1E1E1E;
-  --card-foreground: #FFFFFF;
-  
-  --popover: #1E1E1E;
-  --popover-foreground: #FFFFFF;
-  
-  --primary: #E53935; /* Lighter red for dark mode */
-  --primary-foreground: #FFFFFF;
-  
-  --secondary: #43A047; /* Lighter green */
-  --secondary-foreground: #FFFFFF;
-  
-  --muted: #2C2C2C;
-  --muted-foreground: #A0A0A0;
-  
-  --accent: #FFD54F;
+  --background: #121212;
+  --foreground: #ffffff;
+
+  --card: #1e1e1e;
+  --card-foreground: #ffffff;
+
+  --popover: #1e1e1e;
+  --popover-foreground: #ffffff;
+
+  --primary: #e53935; /* Lighter red for dark mode */
+  --primary-foreground: #ffffff;
+
+  --secondary: #43a047; /* Lighter green */
+  --secondary-foreground: #ffffff;
+
+  --muted: #2c2c2c;
+  --muted-foreground: #a0a0a0;
+
+  --accent: #ffd54f;
   --accent-foreground: #000000;
-  
-  --destructive: #EF5350;
-  --destructive-foreground: #FFFFFF;
-  
+
+  --destructive: #ef5350;
+  --destructive-foreground: #ffffff;
+
   --border: #424242;
   --input: #424242;
-  --ring: #E53935;
-  
+  --ring: #e53935;
+
   --chart-1: oklch(0.488 0.243 264.376);
   --chart-2: oklch(0.696 0.17 162.48);
   --chart-3: oklch(0.769 0.188 70.08);
   --chart-4: oklch(0.627 0.265 303.9);
   --chart-5: oklch(0.645 0.246 16.439);
-  
+
   --sidebar: #121212;
-  --sidebar-foreground: #FFFFFF;
-  --sidebar-primary: #E53935;
-  --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #2C2C2C;
-  --sidebar-accent-foreground: #E53935;
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #e53935;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #2c2c2c;
+  --sidebar-accent-foreground: #e53935;
   --sidebar-border: #424242;
-  --sidebar-ring: #E53935;
+  --sidebar-ring: #e53935;
 }
 
 @layer base {
@@ -163,12 +166,12 @@
   }
   body {
     @apply bg-black text-foreground min-h-screen relative overflow-x-hidden;
-    background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), url('/main-bg.jpg');
+    background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), url("/main-bg.jpg");
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
   }
-  
+
   /* Snow effect overlay */
   /* Snow effect overlay - Layer 1 (Slow, small) */
   body::before {
@@ -179,14 +182,14 @@
     width: 100%;
     height: 100%;
     pointer-events: none;
-    background-image: 
-      radial-gradient(3px 3px at 50px 50px, #fff, transparent), 
-      radial-gradient(4px 4px at 150px 150px, #fff, transparent), 
-      radial-gradient(2px 2px at 250px 250px, #fff, transparent), 
+    background-image:
+      radial-gradient(3px 3px at 50px 50px, #fff, transparent),
+      radial-gradient(4px 4px at 150px 150px, #fff, transparent),
+      radial-gradient(2px 2px at 250px 250px, #fff, transparent),
       radial-gradient(3px 3px at 350px 350px, #fff, transparent),
-      radial-gradient(4px 4px at 450px 50px, #fff, transparent), 
+      radial-gradient(4px 4px at 450px 50px, #fff, transparent),
       radial-gradient(2px 2px at 550px 150px, #fff, transparent),
-      radial-gradient(3px 3px at 650px 250px, #fff, transparent), 
+      radial-gradient(3px 3px at 650px 250px, #fff, transparent),
       radial-gradient(4px 4px at 750px 350px, #fff, transparent),
       radial-gradient(2px 2px at 850px 50px, #fff, transparent),
       radial-gradient(5px 5px at 50px 450px, #fff, transparent),
@@ -209,10 +212,10 @@
     width: 100%;
     height: 100%;
     pointer-events: none;
-    background-image: 
-      radial-gradient(6px 6px at 100px 100px, #fff, transparent), 
-      radial-gradient(8px 8px at 300px 300px, #fff, transparent), 
-      radial-gradient(6px 6px at 500px 500px, #fff, transparent), 
+    background-image:
+      radial-gradient(6px 6px at 100px 100px, #fff, transparent),
+      radial-gradient(8px 8px at 300px 300px, #fff, transparent),
+      radial-gradient(6px 6px at 500px 500px, #fff, transparent),
       radial-gradient(8px 8px at 700px 700px, #fff, transparent),
       radial-gradient(6px 6px at 200px 600px, #fff, transparent),
       radial-gradient(8px 8px at 600px 200px, #fff, transparent),

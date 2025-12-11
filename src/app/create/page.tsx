@@ -22,47 +22,48 @@ export default function CreateProfilePage() {
 
   return (
     <div className="min-h-screen flex flex-col max-w-md mx-auto relative shadow-2xl overflow-hidden min-h-screen bg-transparent">
-      
       <main className="flex-1 flex flex-col px-6 space-y-8 pt-10">
         <div className="space-y-4">
-            <h1 className="text-3xl font-bold text-foreground leading-tight">
-                <span className="text-christmas-red">산타 이름표</span>를
-                만들어주세요!
-            </h1>
-            <p className="text-lg text-muted-foreground leading-relaxed">
-                친구들이 나를 알아볼 수 있도록<br/>
-                이름이나 닉네임을 입력해주세요.
-            </p>
+          <h1 className="text-3xl font-bold text-foreground leading-tight">
+            <span className="text-christmas-red">산타 이름표</span>를 만들어주세요!
+          </h1>
+          <p className="text-lg text-muted-foreground leading-relaxed">
+            친구들이 나를 알아볼 수 있도록
+            <br />
+            이름이나 닉네임을 입력해주세요.
+          </p>
         </div>
-        
+
         <form id="create-profile-form" onSubmit={handleSubmit} className="space-y-6 pb-32">
-            <div className="space-y-2">
-                <Label htmlFor="name" className="text-base font-medium">닉네임</Label>
-                <Input 
-                    id="name" 
-                    placeholder="예: 루돌프, 산타할아버지" 
-                    className="h-12 text-lg bg-[#1D3557] border-white/20 text-white placeholder:text-gray-400 focus-visible:ring-christmas-red focus-visible:border-transparent"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    maxLength={10}
-                    required
-                />
-                <p className="text-xs text-muted-foreground text-right">{name.length}/10</p>
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="name" className="text-base font-medium">
+              닉네임
+            </Label>
+            <Input
+              id="name"
+              placeholder="예: 루돌프, 산타할아버지"
+              className="h-12 text-lg bg-[#1D3557] border-white/20 text-white placeholder:text-gray-400 focus-visible:ring-christmas-red focus-visible:border-transparent"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              maxLength={10}
+              required
+            />
+            <p className="text-xs text-muted-foreground text-right">{name.length}/10</p>
+          </div>
         </form>
 
         <div className="fixed bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 to-transparent z-50">
-            <div className="max-w-md mx-auto">
-                <Button 
-                    type="submit" 
-                    form="create-profile-form"
-                    size="lg" 
-                    className="w-full h-14 text-lg font-bold bg-christmas-red hover:bg-[#A01830] transition-all shadow-lg"
-                    disabled={!name.trim()}
-                >
-                    내 산타 링크 만들기
-                </Button>
-            </div>
+          <div className="max-w-md mx-auto">
+            <Button
+              type="submit"
+              form="create-profile-form"
+              size="lg"
+              className="w-full h-14 text-lg font-bold bg-christmas-red hover:bg-[#A01830] transition-all shadow-lg"
+              disabled={!name.trim()}
+            >
+              내 산타 링크 만들기
+            </Button>
+          </div>
         </div>
       </main>
     </div>
