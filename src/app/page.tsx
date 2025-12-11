@@ -31,6 +31,12 @@ export default function Home() {
                     <span className="font-bold text-foreground">어떻게 생각하고 있을까요?</span>
                 </p>
                 
+                {/* Video GIF Placeholder - User should provide main_video.gif */}
+                <div className="flex justify-center pb-2">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src="/main_move_v2.gif" alt="Christmas Animation" className="w-full object-cover animate-fade-in" />
+                </div>
+
                 <div className="space-y-4 pt-4">
                     {/* Kakao Login - Mock Redirect for Dev */}
                     <Button className="w-full h-14 bg-[#FEE500] hover:bg-[#FDD835] text-[#0B132B] font-medium text-lg rounded-xl flex items-center justify-center gap-3 relative shadow-sm border border-[#FEE500]" asChild>
