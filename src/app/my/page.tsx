@@ -61,9 +61,8 @@ export default function MyPage() {
 
             {/* CTAs */}
             <div className="w-full space-y-3 animate-fade-in-up delay-200">
-                 <Button 
-                    variant="outline" 
-                    className="w-full h-16 text-xl border-2 border-christmas-red text-christmas-red hover:bg-christmas-red/10 bg-transparent rounded-xl gap-2 font-bold transition-transform active:scale-[0.98]" 
+                <Button 
+                    className="w-full h-16 text-xl bg-white text-christmas-red hover:bg-white/90 rounded-xl gap-2 font-bold transition-transform active:scale-[0.98] shadow-lg" 
                     onClick={handleCopy}
                 >
                     <Copy className="w-6 h-6" />

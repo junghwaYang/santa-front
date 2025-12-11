@@ -22,18 +22,11 @@ export default function CreateProfilePage() {
 
   return (
     <div className="min-h-screen flex flex-col max-w-md mx-auto relative shadow-2xl overflow-hidden min-h-screen bg-transparent">
-      <header className="p-4 flex items-center relative z-10">
-        <Button variant="ghost" size="icon" asChild className="hover:bg-transparent">
-            <Link href="/login">
-                <ChevronLeft className="w-6 h-6 text-foreground" />
-            </Link>
-        </Button>
-      </header>
       
       <main className="flex-1 flex flex-col px-6 space-y-8 pt-10">
         <div className="space-y-4">
             <h1 className="text-3xl font-bold text-foreground leading-tight">
-                <span className="text-christmas-red">산타 이름표</span>를<br/>
+                <span className="text-christmas-red">산타 이름표</span>를
                 만들어주세요!
             </h1>
             <p className="text-lg text-muted-foreground leading-relaxed">
@@ -42,13 +35,7 @@ export default function CreateProfilePage() {
             </p>
         </div>
         
-        <div className="flex justify-center py-6">
-             <div className="w-32 h-32 bg-cream rounded-full flex items-center justify-center border-4 border-gold shadow-inner">
-                <Gift className="w-16 h-16 text-christmas-red animate-bounce-subtle" />
-             </div>
-        </div>
-        
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form id="create-profile-form" onSubmit={handleSubmit} className="space-y-6 pb-32">
             <div className="space-y-2">
                 <Label htmlFor="name" className="text-base font-medium">닉네임</Label>
                 <Input 
@@ -62,16 +49,21 @@ export default function CreateProfilePage() {
                 />
                 <p className="text-xs text-muted-foreground text-right">{name.length}/10</p>
             </div>
-            
-            <Button 
-                type="submit" 
-                size="lg" 
-                className="w-full h-14 text-lg font-bold bg-christmas-red hover:bg-[#A01830] transition-all shadow-lg mt-8"
-                disabled={!name.trim()}
-            >
-                내 산타 링크 만들기
-            </Button>
         </form>
+
+        <div className="fixed bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 to-transparent z-50">
+            <div className="max-w-md mx-auto">
+                <Button 
+                    type="submit" 
+                    form="create-profile-form"
+                    size="lg" 
+                    className="w-full h-14 text-lg font-bold bg-christmas-red hover:bg-[#A01830] transition-all shadow-lg"
+                    disabled={!name.trim()}
+                >
+                    내 산타 링크 만들기
+                </Button>
+            </div>
+        </div>
       </main>
     </div>
   );
