@@ -162,7 +162,11 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1D3557] via-[#0B132B] to-[#000000] text-foreground min-h-screen relative overflow-x-hidden;
+    @apply bg-black text-foreground min-h-screen relative overflow-x-hidden;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), url('/main-bg.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
   }
   
   /* Snow effect overlay */
