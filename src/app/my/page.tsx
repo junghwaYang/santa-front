@@ -33,13 +33,17 @@ export default function MyPage() {
     };
 
     return (
-        <div className="min-h-screen flex flex-col max-w-md mx-auto relative shadow-2xl overflow-hidden bg-transparent p-6 items-center justify-center text-center space-y-10">
+        <div className="min-h-screen flex flex-col max-w-md mx-auto relative shadow-2xl overflow-hidden bg-transparent p-6  text-center space-y-10">
             
             {/* Header / Success State */}
             <div className="space-y-6 flex flex-col items-center animate-fade-in-down">
-                <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center shadow-xl animate-bounce-subtle">
-                    <CheckCircle className="w-12 h-12 text-christmas-red stroke-[3]" />
-                </div>
+                {/* GIF Icon */ }
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img 
+                    src="/find.gif" 
+                    alt="Finding Friends" 
+                    className="w-full object-contain drop-shadow-xl animate-bounce-subtle" 
+                />
                 <div className="space-y-3">
                     <h1 className="text-3xl font-bold text-white leading-tight">
                         링크가 생성되었어요!
