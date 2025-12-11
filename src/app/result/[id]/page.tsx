@@ -1,10 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Card } from "@/components/ui/card";
-import { Copy, Download, Share2, Gift } from "lucide-react";
-import { MessageTree } from "@/components/message-tree";
+import { Copy, Download, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { toast } from "sonner";
@@ -56,13 +56,25 @@ const RESULT_DATA = {
         "올 한 해도 고생했어! 내년에도 함께하자 ❤️",
         "너랑 친구여서 정말 다행이야. 메리 크리스마스!",
         "항상 배울 점이 많은 친구야. 응원해!",
-        "운동 좀 그만하고 술 좀 마시자 ㅋㅋㅋ 농담이고 건강해라!"
+        "운동 좀 그만하고 술 좀 마시자 ㅋㅋㅋ 농담이고 건강해라!",
+        "2025년에는 더 대박나자! 화이팅!",
+        "따뜻한 연말 보내고 새해 복 많이 받아~",
+        "언제나 긍정적인 에너지 고마워 :)",
+        "우리 우정 영원히 변치 말자!"
     ]
 };
 
 export default function ResultPage() {
     const params = useParams(); // params.id
-    
+    const [currentPage, setCurrentPage] = useState(1);
+    const MESSAGES_PER_PAGE = 5;
+
+    const totalPages = Math.ceil(RESULT_DATA.messages.length / MESSAGES_PER_PAGE);
+    const currentMessages = RESULT_DATA.messages.slice(
+        (currentPage - 1) * MESSAGES_PER_PAGE,
+        currentPage * MESSAGES_PER_PAGE
+    );
+
     const handleCopy = () => {
         const link = window.location.href;
         navigator.clipboard.writeText(link).then(() => {
@@ -70,6 +82,12 @@ export default function ResultPage() {
                 duration: 2000,
             });
         });
+    };
+    
+    const handlePageChange = (newPage: number) => {
+        if (newPage >= 1 && newPage <= totalPages) {
+            setCurrentPage(newPage);
+        }
     };
 
     return (
@@ -119,18 +137,14 @@ export default function ResultPage() {
                 {/* Content Section (Actions, Stats, etc.) */}
                 <div className="px-4 py-8 space-y-10">
                     {/* Actions */}
-                    <div className="grid grid-cols-3 gap-3">
-                         <Button variant="outline" className="h-14 border-christmas-red text-christmas-red hover:bg-christmas-red/10 bg-transparent flex gap-1 px-0" onClick={handleCopy}>
+                    <div className="grid grid-cols-2 gap-3">
+                         <Button className="h-14 bg-christmas-red hover:bg-red-700 text-white flex gap-1 px-0" onClick={handleCopy}>
                             <Copy className="w-5 h-5" />
                             <span className="text-sm font-medium">링크복사</span>
                         </Button>
-                        <Button variant="outline" className="h-14 border-christmas-red text-christmas-red hover:bg-christmas-red/10 bg-transparent flex gap-1 px-0">
+                        <Button className="h-14 bg-christmas-red hover:bg-red-700 text-white flex gap-1 px-0">
                             <Download className="w-5 h-5" />
                              <span className="text-sm font-medium">이미지</span>
-                        </Button>
-                        <Button className="h-14 bg-[#FEE500] hover:bg-[#FDD835] text-black border-none flex gap-1 px-0">
-                            <Share2 className="w-5 h-5" />
-                             <span className="text-sm font-medium">카카오</span>
                         </Button>
                     </div>
 
@@ -183,15 +197,48 @@ export default function ResultPage() {
                         </div>
                     </div>
 
-                    {/* Messages Section - Tree Visualization */}
+                    {/* Messages Section - List Visualization */}
                     <div className="space-y-6 pb-20">
-                        <h3 className="font-bold text-xl flex items-center gap-2 text-white justify-center">
-                            🎄 내 트리에 달린 편지 <span className="bg-christmas-red text-white text-xs px-2 py-1 rounded-full">{RESULT_DATA.messages.length}</span>
+                        <h3 className="font-bold text-xl flex items-center gap-2 text-white justify-center drop-shadow-md">
+                            💌 따뜻한 한마디 <span className="bg-christmas-red text-white text-xs px-2 py-1 rounded-full">{RESULT_DATA.messages.length}</span>
                         </h3>
                         
-                        <div className="bg-[#1D3557]/20 rounded-[2.5rem] p-4 border border-white/5 shadow-inner">
-                             <MessageTree messages={RESULT_DATA.messages} userName={RESULT_DATA.userName} />
+                        <div className="space-y-3 min-h-[300px]">
+                            {currentMessages.map((msg, idx) => (
+                                <div key={idx} className="bg-white/10 backdrop-blur-md rounded-xl p-5 border border-white/5 shadow-sm hover:bg-white/15 transition-colors animate-fade-in-up">
+                                    <p className="text-gray-100 font-medium leading-relaxed">
+                                        "{msg}"
+                                    </p>
+                                </div>
+                            ))}
                         </div>
+
+                        {/* Pagination Controls */}
+                        {totalPages > 1 && (
+                            <div className="flex justify-center items-center gap-4 pt-2">
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => handlePageChange(currentPage - 1)}
+                                    disabled={currentPage === 1}
+                                    className="text-white hover:bg-white/10 disabled:opacity-30"
+                                >
+                                    <ChevronLeft className="w-6 h-6" />
+                                </Button>
+                                <span className="text-white font-medium text-sm">
+                                    {currentPage} / {totalPages}
+                                </span>
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => handlePageChange(currentPage + 1)}
+                                    disabled={currentPage === totalPages}
+                                    className="text-white hover:bg-white/10 disabled:opacity-30"
+                                >
+                                    <ChevronRight className="w-6 h-6" />
+                                </Button>
+                            </div>
+                        )}
                     </div>
                 </div>
                 
