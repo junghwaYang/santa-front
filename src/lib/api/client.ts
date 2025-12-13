@@ -62,7 +62,14 @@ class ApiClient {
       };
     }
 
-    return response.json();
+    const json = await response.json();
+
+    // API 응답이 { success: true, data: ... } 형식인 경우 data 추출
+    if (json && typeof json === "object" && "success" in json && "data" in json) {
+      return json.data;
+    }
+
+    return json;
   }
 
   get<T>(endpoint: string): Promise<T> {

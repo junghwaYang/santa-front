@@ -10,8 +10,12 @@ export const authApi = {
     });
 
     // 토큰 저장
-    tokenStorage.setAccessToken(response.accessToken);
-    tokenStorage.setRefreshToken(response.refreshToken);
+    if (response.accessToken) {
+      tokenStorage.setAccessToken(response.accessToken);
+    }
+    if (response.refreshToken) {
+      tokenStorage.setRefreshToken(response.refreshToken);
+    }
 
     return response;
   },

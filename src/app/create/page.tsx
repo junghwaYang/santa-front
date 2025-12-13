@@ -1,24 +1,49 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ChevronLeft, Gift } from "lucide-react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/lib/context/auth-context";
+
+const NICKNAME_KEY = "santa-nickname";
 
 export default function CreateProfilePage() {
   const [name, setName] = useState("");
   const router = useRouter();
+  const { isLoggedIn, isLoading } = useAuth();
+
+  useEffect(() => {
+    // 로그인 체크
+    if (!isLoading && !isLoggedIn) {
+      router.push("/");
+      return;
+    }
+
+    // 이미 닉네임이 설정되어 있으면 /my로 이동
+    const savedNickname = localStorage.getItem(NICKNAME_KEY);
+    if (savedNickname) {
+      router.push("/my");
+    }
+  }, [isLoading, isLoggedIn, router]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (name.trim()) {
-      // TODO: Call API to save user and generate link
-      router.push("/my"); // Redirect to Dashboard/Share page
+      // 닉네임을 로컬 스토리지에 저장
+      localStorage.setItem(NICKNAME_KEY, name.trim());
+      router.push("/my");
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-christmas-red"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col max-w-md mx-auto relative shadow-2xl overflow-hidden min-h-screen bg-transparent">

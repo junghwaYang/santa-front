@@ -10,10 +10,13 @@ import { useAuth } from "@/lib/context/auth-context";
 import { usersApi } from "@/lib/api";
 import type { UserInfo } from "@/lib/api";
 
+const NICKNAME_KEY = "santa-nickname";
+
 export default function MyPage() {
   const router = useRouter();
   const { user, isLoading: authLoading, isLoggedIn } = useAuth();
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
+  const [nickname, setNickname] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -21,6 +24,14 @@ export default function MyPage() {
       router.push("/");
       return;
     }
+
+    // 닉네임이 없으면 /create로 이동
+    const savedNickname = localStorage.getItem(NICKNAME_KEY);
+    if (!savedNickname) {
+      router.push("/create");
+      return;
+    }
+    setNickname(savedNickname);
 
     if (user?.userId) {
       const loadUserInfo = async () => {
@@ -89,7 +100,7 @@ export default function MyPage() {
         />
         <div className="space-y-3">
           <h1 className="text-3xl font-bold text-white leading-tight">
-            {userInfo.name}님의 링크가 생성되었어요!
+            {nickname}님의 링크가 생성되었어요!
           </h1>
           <p className="text-lg text-gray-200 leading-relaxed">
             친구들에게 공유해서
@@ -135,11 +146,11 @@ export default function MyPage() {
         >
           {userInfo.canViewResult ? (
             <Link href={`/result/${userInfo.userId}`}>
-              <Gift className="w-6 h-6" />내 결과 보러가기
+              <Gift className="size-8" />내 결과 보러가기
             </Link>
           ) : (
-            <span>
-              <Gift className="w-6 h-6" />
+            <span className="flex items-center gap-2">
+              <Gift className="size-8" />
               {userInfo.minimumResponses}명 이상 응답 시 결과 확인 가능
             </span>
           )}

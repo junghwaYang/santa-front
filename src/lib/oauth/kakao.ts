@@ -42,7 +42,6 @@ export const initKakao = (): Promise<void> => {
     // SDK 스크립트 로드
     const script = document.createElement("script");
     script.src = "https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js";
-    script.integrity = "sha384-DKYJZ8NLiK8MN4/C5P2ezmLTBaLcBuD0MgT7CKwHlVPBq2RpMHs9ZtRxHN3sVXt/";
     script.crossOrigin = "anonymous";
     script.onload = () => {
       if (window.Kakao && !window.Kakao.isInitialized()) {
@@ -60,8 +59,29 @@ export const kakaoLogin = (): void => {
   const redirectUri = `${window.location.origin}/auth/kakao/callback`;
   window.Kakao.Auth.authorize({
     redirectUri,
-    scope: "profile_nickname,profile_image,account_email",
   });
+};
+
+// authorization code를 access_token으로 교환 (서버 API Route 통해)
+export const getKakaoToken = async (code: string): Promise<string> => {
+  const redirectUri = `${window.location.origin}/auth/kakao/callback`;
+
+  const response = await fetch("/api/auth/kakao/token", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ code, redirectUri }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    console.error("Token error:", error);
+    throw new Error(error.message || "Failed to get Kakao token");
+  }
+
+  const data = await response.json();
+  return data.access_token;
 };
 
 export const getKakaoAccessToken = (): string | null => {
