@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
-import { MSWProvider } from "@/components/msw-provider";
+import { AuthProvider } from "@/lib/context/auth-context";
 
 export const metadata: Metadata = {
   title: "올해의 나는 어떤 산타?",
@@ -16,10 +16,10 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body className="antialiased bg-background text-foreground">
-        <MSWProvider>
+        <AuthProvider>
           {children}
           <Toaster position="top-center" />
-        </MSWProvider>
+        </AuthProvider>
       </body>
     </html>
   );

@@ -1,42 +1,83 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Copy, Gift, CheckCircle } from "lucide-react";
+import { Copy, Gift } from "lucide-react";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/lib/context/auth-context";
+import { usersApi } from "@/lib/api";
+import type { UserInfo } from "@/lib/api";
 
 export default function MyPage() {
-  const [status, setStatus] = useState({ responseCount: 0, requiredCount: 3, isReady: false });
+  const router = useRouter();
+  const { user, isLoading: authLoading, isLoggedIn } = useAuth();
+  const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch mock status
-    fetch("/api/user/user123/status")
-      .then((res) => res.json())
-      .then((data) => setStatus(data))
-      .catch((err) => console.error(err));
-  }, []);
+    if (!authLoading && !isLoggedIn) {
+      router.push("/");
+      return;
+    }
+
+    if (user?.userId) {
+      const loadUserInfo = async () => {
+        try {
+          setIsLoading(true);
+          const data = await usersApi.getUser(user.userId);
+          setUserInfo(data);
+        } catch (err) {
+          console.error("Failed to load user info:", err);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+      loadUserInfo();
+    }
+  }, [user, authLoading, isLoggedIn, router]);
+
+  const shareLink = userInfo
+    ? `${typeof window !== "undefined" ? window.location.origin : ""}/q/${userInfo.uniqueLink}`
+    : "";
 
   const handleCopy = () => {
-    const link = "https://santa.app/q/user123";
+    if (!shareLink) return;
     navigator.clipboard
-      .writeText(link)
+      .writeText(shareLink)
       .then(() => {
         toast.success("링크가 복사되었습니다!", {
-          description: "친구들에게 공유해보세요 🎅",
+          description: "친구들에게 공유해보세요",
           duration: 3000,
         });
       })
-      .catch((err) => {
+      .catch(() => {
         toast.error("복사에 실패했습니다.", {
           description: "다시 시도해주세요.",
         });
       });
   };
 
+  // 로딩 상태
+  if (authLoading || isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-christmas-red mx-auto"></div>
+          <p className="text-lg text-muted-foreground">로딩 중...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // 로그인 안됨
+  if (!isLoggedIn || !userInfo) {
+    return null;
+  }
+
   return (
-    <div className="min-h-screen flex flex-col max-w-md mx-auto relative shadow-2xl overflow-hidden bg-transparent p-6  text-center space-y-10">
+    <div className="min-h-screen flex flex-col max-w-md mx-auto relative shadow-2xl overflow-hidden bg-transparent p-6 text-center space-y-10">
       {/* Header / Success State */}
       <div className="space-y-6 flex flex-col items-center animate-fade-in-down">
         {/* GIF Icon */}
@@ -47,12 +88,21 @@ export default function MyPage() {
           className="w-full object-contain drop-shadow-xl animate-bounce-subtle"
         />
         <div className="space-y-3">
-          <h1 className="text-3xl font-bold text-white leading-tight">링크가 생성되었어요!</h1>
+          <h1 className="text-3xl font-bold text-white leading-tight">
+            {userInfo.name}님의 링크가 생성되었어요!
+          </h1>
           <p className="text-lg text-gray-200 leading-relaxed">
             친구들에게 공유해서
             <br />
             나에 대한 솔직한 답변을 받아보세요
           </p>
+          {userInfo.responseCount > 0 && (
+            <p className="text-sm text-christmas-red font-medium">
+              현재 {userInfo.responseCount}명이 응답했어요!
+              {!userInfo.canViewResult &&
+                ` (${userInfo.minimumResponses - userInfo.responseCount}명 더 필요)`}
+            </p>
+          )}
         </div>
       </div>
 
@@ -60,7 +110,7 @@ export default function MyPage() {
       <div className="w-full bg-[#1D3557]/60 backdrop-blur-lg rounded-2xl p-6 text-left border border-white/10 space-y-2 shadow-lg animate-fade-in-up delay-100">
         <span className="text-xs text-gray-400 font-medium block ml-1">공유 링크</span>
         <div className="bg-black/20 rounded-lg p-3 truncate font-mono text-white text-base">
-          https://santa.app/q/user123
+          {shareLink}
         </div>
       </div>
 
@@ -75,12 +125,24 @@ export default function MyPage() {
         </Button>
 
         <Button
-          className="w-full h-16 text-xl bg-[#FEE500] hover:bg-[#FDD835] text-[#0B132B] border-none rounded-xl gap-2 font-bold shadow-lg transition-transform active:scale-[0.98]"
-          asChild
+          className={`w-full h-16 text-xl rounded-xl gap-2 font-bold shadow-lg transition-transform active:scale-[0.98] ${
+            userInfo.canViewResult
+              ? "bg-[#FEE500] hover:bg-[#FDD835] text-[#0B132B]"
+              : "bg-gray-500 text-gray-300 cursor-not-allowed"
+          }`}
+          disabled={!userInfo.canViewResult}
+          asChild={userInfo.canViewResult}
         >
-          <Link href="/result/user123">
-            <Gift className="w-6 h-6" />내 결과 보러가기
-          </Link>
+          {userInfo.canViewResult ? (
+            <Link href={`/result/${userInfo.userId}`}>
+              <Gift className="w-6 h-6" />내 결과 보러가기
+            </Link>
+          ) : (
+            <span>
+              <Gift className="w-6 h-6" />
+              {userInfo.minimumResponses}명 이상 응답 시 결과 확인 가능
+            </span>
+          )}
         </Button>
       </div>
     </div>

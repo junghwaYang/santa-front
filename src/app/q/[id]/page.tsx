@@ -1,14 +1,15 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter, useParams } from "next/navigation"; // useParams for ID
-import { QUESTIONS, AnswerOption } from "@/lib/data/questions"; // Assuming aliases work
-// If aliases like @/ don't work in write_to_file check, I will try relative path. usually @/ works if tsconfig has it.
+import { useRouter, useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress"; // Need to install progress if not yet
-import { Textarea } from "@/components/ui/textarea"; // Need to install textarea? I only installed input. I will use Input or semantic textarea.
+import { Progress } from "@/components/ui/progress";
+import { Textarea } from "@/components/ui/textarea";
 import { ChevronLeft } from "lucide-react";
+import { toast } from "sonner";
+import { usersApi, questionsApi, responsesApi } from "@/lib/api";
+import type { Question, QuestionAnswer } from "@/lib/api";
 
 const STORAGE_KEY = "santa-questionnaire";
 const MAX_MESSAGE_LENGTH = 150;
@@ -57,17 +58,55 @@ const containsProfanity = (text: string): boolean => {
   return PROFANITY_LIST.some((word) => lowerText.includes(word.toLowerCase()));
 };
 
+interface SelectedAnswer {
+  questionId: string;
+  choiceId: QuestionAnswer;
+}
+
 export default function QuestionnairePage() {
   const router = useRouter();
-  const params = useParams(); // params.id
+  const params = useParams();
+  const uniqueLink = params.id as string;
+
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [answers, setAnswers] = useState<AnswerOption[]>([]);
+  const [answers, setAnswers] = useState<SelectedAnswer[]>([]);
   const [warmMessage, setWarmMessage] = useState("");
   const [isLoaded, setIsLoaded] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // API 데이터
+  const [questions, setQuestions] = useState<Question[]>([]);
+  const [userName, setUserName] = useState("");
+  const [userId, setUserId] = useState("");
+  const [isLoadingData, setIsLoadingData] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // API에서 데이터 로드
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setIsLoadingData(true);
+        const [userResponse, questionsResponse] = await Promise.all([
+          usersApi.getUserByLink(uniqueLink),
+          questionsApi.getQuestions(),
+        ]);
+        setUserName(userResponse.name);
+        setUserId(userResponse.userId);
+        setQuestions(questionsResponse.questions);
+      } catch (err) {
+        console.error("Failed to load data:", err);
+        setError("데이터를 불러오는데 실패했습니다.");
+      } finally {
+        setIsLoadingData(false);
+      }
+    };
+    loadData();
+  }, [uniqueLink]);
 
   // 로컬스토리지에서 저장된 답변 불러오기
   useEffect(() => {
-    const saved = localStorage.getItem(`${STORAGE_KEY}-${params.id}`);
+    if (isLoadingData) return;
+    const saved = localStorage.getItem(`${STORAGE_KEY}-${uniqueLink}`);
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
@@ -79,32 +118,31 @@ export default function QuestionnairePage() {
       }
     }
     setIsLoaded(true);
-  }, [params.id]);
+  }, [uniqueLink, isLoadingData]);
 
   // 답변이 변경될 때마다 로컬스토리지에 저장
   useEffect(() => {
     if (isLoaded) {
       localStorage.setItem(
-        `${STORAGE_KEY}-${params.id}`,
+        `${STORAGE_KEY}-${uniqueLink}`,
         JSON.stringify({
           answers,
           warmMessage,
         })
       );
     }
-  }, [answers, warmMessage, params.id, isLoaded]);
+  }, [answers, warmMessage, uniqueLink, isLoaded]);
 
-  // Total steps: 5 questions + 1 message
-  const totalSteps = QUESTIONS.length + 1;
+  // Total steps: questions + 1 message
+  const totalSteps = questions.length + 1;
   const progress = ((currentIndex + 1) / totalSteps) * 100;
 
-  const handleAnswer = (option: AnswerOption) => {
-    // 현재 인덱스의 답변을 덮어쓰기
+  const handleAnswer = (questionId: string, choiceId: QuestionAnswer) => {
     const newAnswers = [...answers];
-    newAnswers[currentIndex] = option;
+    newAnswers[currentIndex] = { questionId, choiceId };
     setAnswers(newAnswers);
 
-    if (currentIndex < QUESTIONS.length) {
+    if (currentIndex < questions.length) {
       setCurrentIndex(currentIndex + 1);
     }
   };
@@ -115,22 +153,64 @@ export default function QuestionnairePage() {
     }
   };
 
-  const handleSubmit = () => {
-    // TODO: Submit answers and message to API
-    console.log("Answers:", answers);
-    console.log("Message:", warmMessage);
+  const handleSubmit = async () => {
+    if (isSubmitting) return;
 
-    // 로컬스토리지에서 임시 저장 데이터 제거
-    localStorage.removeItem(`${STORAGE_KEY}-${params.id}`);
+    try {
+      setIsSubmitting(true);
 
-    // Redirect to done page
-    router.push(`/q/${params.id}/done`);
+      // 답변을 API 형식으로 변환
+      const answersRecord: Record<string, QuestionAnswer> = {};
+      answers.forEach((answer) => {
+        answersRecord[answer.questionId] = answer.choiceId;
+      });
+
+      await responsesApi.submitResponse({
+        userId,
+        respondentNickname: "익명", // TODO: 닉네임 입력 받기
+        answers: answersRecord,
+        warmMessage: warmMessage.trim() || undefined,
+      });
+
+      // 로컬스토리지에서 임시 저장 데이터 제거
+      localStorage.removeItem(`${STORAGE_KEY}-${uniqueLink}`);
+
+      // Redirect to done page
+      router.push(`/q/${uniqueLink}/done`);
+    } catch (err) {
+      console.error("Failed to submit:", err);
+      toast.error("제출에 실패했습니다. 다시 시도해주세요.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  const userName = "양정화"; // Mock user name from API fetch based on ID
+  // 로딩 상태
+  if (isLoadingData) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-christmas-red mx-auto"></div>
+          <p className="text-lg text-muted-foreground">로딩 중...</p>
+        </div>
+      </div>
+    );
+  }
 
-  if (currentIndex < QUESTIONS.length) {
-    const question = QUESTIONS[currentIndex];
+  // 에러 상태
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-6">
+        <div className="text-center space-y-4">
+          <p className="text-lg text-red-500">{error}</p>
+          <Button onClick={() => router.push("/")}>홈으로 돌아가기</Button>
+        </div>
+      </div>
+    );
+  }
+
+  if (currentIndex < questions.length) {
+    const question = questions[currentIndex];
     return (
       <div className="min-h-screen flex flex-col max-w-md mx-auto relative shadow-2xl overflow-hidden min-h-screen bg-transparent">
         <header className="p-4 flex items-center gap-4">
@@ -151,7 +231,7 @@ export default function QuestionnairePage() {
           </span>
         </header>
 
-        <main className="flex-1 flex flex-col p-6 space-y-10 animate-in fade-in slide-in-from-right-4 duration-500 key={currentIndex}">
+        <main className="flex-1 flex flex-col p-6 space-y-10 animate-in fade-in slide-in-from-right-4 duration-500">
           <div className="space-y-4">
             <span className="text-christmas-red font-bold text-xl tracking-wider">
               Q.{question.id}
@@ -162,19 +242,19 @@ export default function QuestionnairePage() {
           </div>
 
           <div className="space-y-4">
-            {question.options.map((option) => {
-              const isSelected = answers[currentIndex]?.id === option.id;
+            {question.choices.map((choice) => {
+              const isSelected = answers[currentIndex]?.choiceId === choice.id;
               return (
                 <Card
-                  key={option.id}
+                  key={choice.id}
                   className={`p-5 cursor-pointer backdrop-blur-md transition-all active:scale-[0.98] border-2 ${
                     isSelected
                       ? "border-christmas-red bg-christmas-red/20 shadow-[0_0_15px_rgba(230,57,70,0.5)]"
                       : "border-transparent bg-[#1D3557]/80 hover:border-christmas-red hover:bg-[#1D3557] hover:shadow-[0_0_15px_rgba(230,57,70,0.5)]"
                   }`}
-                  onClick={() => handleAnswer(option)}
+                  onClick={() => handleAnswer(question.id, choice.id)}
                 >
-                  <span className="text-xl font-medium text-white">{option.text}</span>
+                  <span className="text-xl font-medium text-white">{choice.text}</span>
                 </Card>
               );
             })}
