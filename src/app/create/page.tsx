@@ -6,11 +6,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/context/auth-context";
+import { usersApi } from "@/lib/api";
 
 const NICKNAME_KEY = "santa-nickname";
 
 export default function CreateProfilePage() {
   const [name, setName] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
   const { isLoggedIn, isLoading } = useAuth();
 
@@ -28,12 +30,20 @@ export default function CreateProfilePage() {
     }
   }, [isLoading, isLoggedIn, router]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (name.trim()) {
-      // 닉네임을 로컬 스토리지에 저장
-      localStorage.setItem(NICKNAME_KEY, name.trim());
-      router.push("/my");
+    if (name.trim() && !isSubmitting) {
+      setIsSubmitting(true);
+      try {
+        // 닉네임을 서버에 저장
+        await usersApi.setNickname(name.trim());
+        // 로컬 스토리지에도 저장
+        localStorage.setItem(NICKNAME_KEY, name.trim());
+        router.push("/my");
+      } catch (error) {
+        console.error("Failed to set nickname:", error);
+        setIsSubmitting(false);
+      }
     }
   };
 
@@ -84,9 +94,9 @@ export default function CreateProfilePage() {
               form="create-profile-form"
               size="lg"
               className="w-full h-14 text-lg font-bold bg-christmas-red hover:bg-[#A01830] transition-all shadow-lg"
-              disabled={!name.trim()}
+              disabled={!name.trim() || isSubmitting}
             >
-              내 산타 링크 만들기
+              {isSubmitting ? "생성 중..." : "내 산타 링크 만들기"}
             </Button>
           </div>
         </div>

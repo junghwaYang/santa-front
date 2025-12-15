@@ -11,4 +11,9 @@ export const usersApi = {
   getUserByLink: async (uniqueLink: string): Promise<UserByLink> => {
     return apiClient.get<UserByLink>(`/users/link/${uniqueLink}`);
   },
+
+  // 닉네임 설정
+  setNickname: async (nickname: string): Promise<void> => {
+    return apiClient.post<void>("/users/nickname", { nickname });
+  },
 };
