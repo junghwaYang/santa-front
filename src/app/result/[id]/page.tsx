@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Copy, Download, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { toPng } from "html-to-image";
 import { resultsApi } from "@/lib/api";
 import type { ResultResponse, Character } from "@/lib/api";
 import { useAuth } from "@/lib/context/auth-context";
@@ -26,9 +27,12 @@ export default function ResultPage() {
   const [resultData, setResultData] = useState<ResultResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isDownloading, setIsDownloading] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(1);
   const MESSAGES_PER_PAGE = 5;
+
+  const captureRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const loadResult = async () => {
@@ -76,6 +80,32 @@ export default function ResultPage() {
     }
   };
 
+  const handleDownload = async () => {
+    if (!captureRef.current || isDownloading) return;
+
+    try {
+      setIsDownloading(true);
+
+      const dataUrl = await toPng(captureRef.current, {
+        quality: 1,
+        pixelRatio: 2,
+        backgroundColor: "#0B132B",
+      });
+
+      const link = document.createElement("a");
+      link.download = `santa-result-${resultData?.userName || "result"}.png`;
+      link.href = dataUrl;
+      link.click();
+
+      toast.success("이미지가 저장되었습니다!");
+    } catch (err) {
+      console.error("Failed to download image:", err);
+      toast.error("이미지 저장에 실패했습니다.");
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
   // 로딩 상태
   if (isLoading) {
     return (
@@ -107,7 +137,7 @@ export default function ResultPage() {
     <div className="min-h-screen flex flex-col items-center max-w-md mx-auto relative shadow-2xl overflow-hidden bg-transparent">
       <main className="w-full animate-fade-in-up">
         {/* Character Section - Full Screen Style */}
-        <div className="w-full relative aspect-[9/16] md:aspect-[3/4] group">
+        <div ref={captureRef} className="w-full relative aspect-[9/16] md:aspect-[3/4] group">
           {/* Background Image */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -157,9 +187,13 @@ export default function ResultPage() {
               <Copy className="w-5 h-5" />
               <span className="text-sm font-medium">링크복사</span>
             </Button>
-            <Button className="h-14 bg-christmas-red hover:bg-red-700 text-white flex gap-1 px-0">
+            <Button
+              className="h-14 bg-christmas-red hover:bg-red-700 text-white flex gap-1 px-0"
+              onClick={handleDownload}
+              disabled={isDownloading}
+            >
               <Download className="w-5 h-5" />
-              <span className="text-sm font-medium">이미지</span>
+              <span className="text-sm font-medium">{isDownloading ? "저장중..." : "이미지"}</span>
             </Button>
           </div>
 
