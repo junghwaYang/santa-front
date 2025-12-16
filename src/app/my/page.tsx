@@ -151,7 +151,7 @@ export default function MyPage() {
           ) : (
             <span className="flex items-center gap-2">
               <Gift className="size-8" />
-              {userInfo.minimumResponses}명 이상 응답 시 결과 확인 가능
+              {userInfo.minimumResponses - userInfo.responseCount}명 더 응답하면 결과 확인 가능
             </span>
           )}
         </Button>

@@ -12,6 +12,7 @@ import { usersApi, questionsApi, responsesApi } from "@/lib/api";
 import type { Question, QuestionAnswer } from "@/lib/api";
 
 const STORAGE_KEY = "santa-questionnaire";
+const SUBMITTED_KEY = "santa-submitted";
 const MAX_MESSAGE_LENGTH = 150;
 const PROFANITY_LIST = [
   // 욕설
@@ -73,6 +74,7 @@ export default function QuestionnairePage() {
   const [warmMessage, setWarmMessage] = useState("");
   const [isLoaded, setIsLoaded] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [hasAlreadySubmitted, setHasAlreadySubmitted] = useState(false);
 
   // API 데이터
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -103,9 +105,16 @@ export default function QuestionnairePage() {
     loadData();
   }, [uniqueLink]);
 
-  // 로컬스토리지에서 저장된 답변 불러오기
+  // 로컬스토리지에서 저장된 답변 및 제출 여부 불러오기
   useEffect(() => {
     if (isLoadingData) return;
+
+    // 이미 제출했는지 확인
+    const submitted = localStorage.getItem(`${SUBMITTED_KEY}-${uniqueLink}`);
+    if (submitted === "true") {
+      setHasAlreadySubmitted(true);
+    }
+
     const saved = localStorage.getItem(`${STORAGE_KEY}-${uniqueLink}`);
     if (saved) {
       try {
@@ -154,7 +163,7 @@ export default function QuestionnairePage() {
   };
 
   const handleSubmit = async () => {
-    if (isSubmitting) return;
+    if (isSubmitting || hasAlreadySubmitted) return;
 
     try {
       setIsSubmitting(true);
@@ -171,6 +180,9 @@ export default function QuestionnairePage() {
         answers: answersRecord,
         warmMessage: warmMessage.trim() || undefined,
       });
+
+      // 제출 완료 표시를 로컬스토리지에 저장
+      localStorage.setItem(`${SUBMITTED_KEY}-${uniqueLink}`, "true");
 
       // 로컬스토리지에서 임시 저장 데이터 제거
       localStorage.removeItem(`${STORAGE_KEY}-${uniqueLink}`);
@@ -317,14 +329,29 @@ export default function QuestionnairePage() {
           </div>
         </div>
 
-        <Button
-          size="lg"
-          className="w-full h-16 text-xl font-bold bg-christmas-red hover:bg-[#A01830] shadow-lg mb-8"
-          disabled={!warmMessage.trim() || containsProfanity(warmMessage)}
-          onClick={handleSubmit}
-        >
-          💌 따뜻한 한마디 보내기
-        </Button>
+        {hasAlreadySubmitted ? (
+          <div className="space-y-2 mb-8">
+            <Button
+              size="lg"
+              className="w-full h-16 text-xl font-bold bg-gray-500 cursor-not-allowed shadow-lg"
+              disabled
+            >
+              이미 메시지를 보냈어요
+            </Button>
+            <p className="text-center text-sm text-gray-400">
+              같은 친구에게는 한 번만 메시지를 보낼 수 있어요
+            </p>
+          </div>
+        ) : (
+          <Button
+            size="lg"
+            className="w-full h-16 text-xl font-bold bg-christmas-red hover:bg-[#A01830] shadow-lg mb-8"
+            disabled={!warmMessage.trim() || containsProfanity(warmMessage) || isSubmitting}
+            onClick={handleSubmit}
+          >
+            {isSubmitting ? "보내는 중..." : "💌 따뜻한 한마디 보내기"}
+          </Button>
+        )}
       </main>
     </div>
   );
