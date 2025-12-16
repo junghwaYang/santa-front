@@ -24,13 +24,15 @@ export default function CreateProfilePage() {
       return;
     }
 
-    // 서버에서 닉네임 확인
+    // 서버에서 닉네임 설정 여부 확인
     if (user?.userId) {
       const checkNickname = async () => {
         try {
           const data = await usersApi.getUser(user.userId);
-          // 닉네임이 설정되어 있고, 기본값("사용자")이 아니면 /my로 이동
-          if (data.name && data.name !== "사용자") {
+          // isNicknameSet 플래그 확인 (없으면 name !== "사용자"로 폴백)
+          const isSet = data.isNicknameSet ?? (data.name && data.name !== "사용자");
+          if (isSet) {
+            // 이미 닉네임을 설정한 적이 있으면 /my로 이동
             localStorage.setItem(NICKNAME_KEY, data.name);
             router.push("/my");
             return;
@@ -50,9 +52,9 @@ export default function CreateProfilePage() {
     if (name.trim() && !isSubmitting) {
       setIsSubmitting(true);
       try {
-        // 닉네임을 서버에 저장
+        // 닉네임을 서버에 저장 (서버에서 isNicknameSet = true로 설정됨)
         await usersApi.setNickname(name.trim());
-        // 로컬 스토리지에도 저장
+        // 로컬 스토리지에 닉네임 저장
         localStorage.setItem(NICKNAME_KEY, name.trim());
         router.push("/my");
       } catch (error) {

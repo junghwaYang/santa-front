@@ -31,13 +31,14 @@ export default function MyPage() {
           setIsLoading(true);
           const data = await usersApi.getUser(user.userId);
 
-          // 서버에 닉네임이 없거나 기본값("사용자")이면 /create로 이동
-          if (!data.name || data.name === "사용자") {
+          // 서버에서 닉네임 설정 여부 확인 (없으면 name !== "사용자"로 폴백)
+          const isSet = data.isNicknameSet ?? (data.name && data.name !== "사용자");
+          if (!isSet) {
             router.push("/create");
             return;
           }
 
-          // 서버에서 가져온 닉네임을 로컬스토리지에 동기화
+          // 닉네임을 로컬스토리지에 동기화
           localStorage.setItem(NICKNAME_KEY, data.name);
           setNickname(data.name);
           setUserInfo(data);

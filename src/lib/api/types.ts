@@ -34,6 +34,7 @@ export interface UserInfo {
   resultGenerated: boolean;
   resultCharacter?: Character;
   resultModifier?: Modifier;
+  isNicknameSet?: boolean;
 }
 
 export interface UserByLink {
