@@ -8,16 +8,9 @@ import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { toPng } from "html-to-image";
 import { resultsApi } from "@/lib/api";
-import type { ResultResponse, Character } from "@/lib/api";
+import type { ResultResponse } from "@/lib/api";
 import { useAuth } from "@/lib/context/auth-context";
 import KakaoAdfit from "@/components/kakao-adfit";
-
-// 캐릭터별 이미지 매핑
-const CHARACTER_IMAGES: Record<Character, string> = {
-  SANTA: "/santa/santa_option1.png",
-  RUDOLPH: "/reindeer/reindeer_option1.png",
-  DWARF: "/dwarf/dwarf_option1.png",
-};
 
 export default function ResultPage() {
   const params = useParams();
@@ -131,7 +124,7 @@ export default function ResultPage() {
     );
   }
 
-  const characterImage = CHARACTER_IMAGES[resultData.result.character];
+  const characterImage = resultData.result.imageUrl;
   const questionStatsArray = Object.entries(resultData.questionStats);
 
   return (
@@ -140,15 +133,22 @@ export default function ResultPage() {
         {/* Character Section - Full Screen Style */}
         <div ref={captureRef} className="w-full relative aspect-[9/16] md:aspect-[3/4] group">
           {/* Background Image */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={characterImage}
-            alt="Character Result"
-            className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-          />
-
-          {/* Dark Gradient Overlay for Text Readability - Only Top */}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/20 to-transparent" />
+          {characterImage ? (
+            <>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={characterImage}
+                alt="Character Result"
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+              />
+              {/* Dark Gradient Overlay for Text Readability - Only Top */}
+              <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/20 to-transparent" />
+            </>
+          ) : (
+            <div className="absolute inset-0 flex items-center justify-center bg-gray-800">
+              <p className="text-gray-400 text-lg">이미지가 없습니다</p>
+            </div>
+          )}
 
           {/* Content Overlay */}
           <div className="absolute inset-0 flex flex-col justify-start gap-6 p-8 text-center text-white pt-12">
