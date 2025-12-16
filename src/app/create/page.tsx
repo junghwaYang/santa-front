@@ -13,8 +13,9 @@ const NICKNAME_KEY = "santa-nickname";
 export default function CreateProfilePage() {
   const [name, setName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isCheckingNickname, setIsCheckingNickname] = useState(true);
   const router = useRouter();
-  const { isLoggedIn, isLoading } = useAuth();
+  const { user, isLoggedIn, isLoading } = useAuth();
 
   useEffect(() => {
     // 로그인 체크
@@ -23,12 +24,26 @@ export default function CreateProfilePage() {
       return;
     }
 
-    // 이미 닉네임이 설정되어 있으면 /my로 이동
-    const savedNickname = localStorage.getItem(NICKNAME_KEY);
-    if (savedNickname) {
-      router.push("/my");
+    // 서버에서 닉네임 확인
+    if (user?.userId) {
+      const checkNickname = async () => {
+        try {
+          const data = await usersApi.getUser(user.userId);
+          if (data.name) {
+            // 이미 닉네임이 설정되어 있으면 로컬스토리지에 저장하고 /my로 이동
+            localStorage.setItem(NICKNAME_KEY, data.name);
+            router.push("/my");
+            return;
+          }
+        } catch (err) {
+          console.error("Failed to check nickname:", err);
+        } finally {
+          setIsCheckingNickname(false);
+        }
+      };
+      checkNickname();
     }
-  }, [isLoading, isLoggedIn, router]);
+  }, [isLoading, isLoggedIn, user, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,7 +62,7 @@ export default function CreateProfilePage() {
     }
   };
 
-  if (isLoading) {
+  if (isLoading || isCheckingNickname) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-christmas-red"></div>

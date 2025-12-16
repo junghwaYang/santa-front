@@ -25,19 +25,21 @@ export default function MyPage() {
       return;
     }
 
-    // 닉네임이 없으면 /create로 이동
-    const savedNickname = localStorage.getItem(NICKNAME_KEY);
-    if (!savedNickname) {
-      router.push("/create");
-      return;
-    }
-    setNickname(savedNickname);
-
     if (user?.userId) {
       const loadUserInfo = async () => {
         try {
           setIsLoading(true);
           const data = await usersApi.getUser(user.userId);
+
+          // 서버에 닉네임이 없으면 /create로 이동
+          if (!data.name) {
+            router.push("/create");
+            return;
+          }
+
+          // 서버에서 가져온 닉네임을 로컬스토리지에 동기화
+          localStorage.setItem(NICKNAME_KEY, data.name);
+          setNickname(data.name);
           setUserInfo(data);
         } catch (err) {
           console.error("Failed to load user info:", err);
