@@ -31,8 +31,8 @@ export default function MyPage() {
           setIsLoading(true);
           const data = await usersApi.getUser(user.userId);
 
-          // 서버에 닉네임이 없으면 /create로 이동
-          if (!data.name) {
+          // 서버에 닉네임이 없거나 기본값("사용자")이면 /create로 이동
+          if (!data.name || data.name === "사용자") {
             router.push("/create");
             return;
           }

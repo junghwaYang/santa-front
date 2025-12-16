@@ -29,8 +29,8 @@ export default function CreateProfilePage() {
       const checkNickname = async () => {
         try {
           const data = await usersApi.getUser(user.userId);
-          if (data.name) {
-            // 이미 닉네임이 설정되어 있으면 로컬스토리지에 저장하고 /my로 이동
+          // 닉네임이 설정되어 있고, 기본값("사용자")이 아니면 /my로 이동
+          if (data.name && data.name !== "사용자") {
             localStorage.setItem(NICKNAME_KEY, data.name);
             router.push("/my");
             return;
