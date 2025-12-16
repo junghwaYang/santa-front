@@ -10,6 +10,7 @@ import { toPng } from "html-to-image";
 import { resultsApi } from "@/lib/api";
 import type { ResultResponse, Character } from "@/lib/api";
 import { useAuth } from "@/lib/context/auth-context";
+import KakaoAdfit from "@/components/kakao-adfit";
 
 // 캐릭터별 이미지 매핑
 const CHARACTER_IMAGES: Record<Character, string> = {
@@ -305,6 +306,11 @@ export default function ResultPage() {
               )}
             </div>
           )}
+        </div>
+
+        {/* Kakao Adfit */}
+        <div className="flex justify-center py-4">
+          <KakaoAdfit unit="DAN-PGMxn4o8PBQp6aoL" width={320} height={100} />
         </div>
 
         <div className="text-center pb-8 w-full flex justify-center px-4">
