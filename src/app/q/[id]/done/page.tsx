@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Gift } from "lucide-react";
 
 export default function DonePage() {
   return (
@@ -17,7 +18,19 @@ export default function DonePage() {
         </p>
       </div>
 
-      <div className="w-full pt-8">
+      <div className="w-full pt-8 space-y-4">
+        {/* Gift CTA */}
+        <Button
+          size="lg"
+          className="w-full h-14 text-lg bg-forest-green hover:bg-green-700 rounded-xl font-bold gap-2"
+          asChild
+        >
+          <Link href="/gift">
+            <Gift className="w-5 h-5" />
+            친구에게 크리스마스 선물하기
+          </Link>
+        </Button>
+
         <div className="bg-[#1D3557]/60 backdrop-blur-lg p-6 rounded-2xl border border-white/10 shadow-lg space-y-4">
           <p className="font-bold text-white">나도 산타 캐릭터를 확인해보고 싶다면?</p>
           <Button

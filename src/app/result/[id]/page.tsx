@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { Copy, Download, ChevronLeft, ChevronRight } from "lucide-react";
+import { Copy, Download, ChevronLeft, ChevronRight, Gift } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -308,9 +308,21 @@ export default function ResultPage() {
           )}
         </div>
 
-        {/* Kakao Adfit */}
-        <div className="flex justify-center py-4">
-          <KakaoAdfit unit="DAN-PGMxn4o8PBQp6aoL" width={320} height={100} />
+
+
+
+
+                {/* Gift CTA */}
+        <div className="px-4 pb-4">
+          <Button
+            className="w-full h-16 text-xl shadow-xl rounded-xl bg-christmas-red hover:bg-red-700 text-white font-bold gap-2"
+            asChild
+          >
+            <Link href="/gift">
+              <Gift className="w-5 h-5" />
+              친구에게 크리스마스 선물하기
+            </Link>
+          </Button>
         </div>
 
         <div className="text-center pb-8 w-full flex justify-center px-4">
@@ -320,6 +332,11 @@ export default function ResultPage() {
           >
             <Link href="/">나도 산타 테스트 하러가기 👉</Link>
           </Button>
+        </div>
+
+                {/* Kakao Adfit */}
+        <div className="flex justify-center py-4">
+          <KakaoAdfit unit="DAN-PGMxn4o8PBQp6aoL" width={320} height={100} />
         </div>
       </main>
     </div>
