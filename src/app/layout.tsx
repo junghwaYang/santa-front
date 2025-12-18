@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/lib/context/auth-context";
+
+const GTM_ID = "GTM-NSJ958FJ";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://santa-test.com";
 const SITE_NAME = "2025 산타 테스트";
@@ -75,7 +78,32 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
+      <head>
+        {/* Google Tag Manager */}
+        <Script
+          id="gtm-script"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+              new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+              j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+              'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+              })(window,document,'script','dataLayer','${GTM_ID}');
+            `,
+          }}
+        />
+      </head>
       <body className="antialiased bg-background text-foreground">
+        {/* Google Tag Manager (noscript) */}
+        <noscript>
+          <iframe
+            src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
+            height="0"
+            width="0"
+            style={{ display: "none", visibility: "hidden" }}
+          />
+        </noscript>
         <AuthProvider>
           {children}
           <Toaster position="top-center" />
