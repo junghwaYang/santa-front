@@ -53,4 +53,26 @@ export const authApi = {
   isLoggedIn: (): boolean => {
     return !!tokenStorage.getAccessToken();
   },
+
+  // 임시 토큰 발급 (카카오 에드핏 심사용)
+  getTempToken: async (): Promise<{ tempToken: string }> => {
+    return apiClient.post<{ tempToken: string }>("/auth/temp-token");
+  },
+
+  // 임시 토큰으로 로그인 (카카오 에드핏 심사용)
+  tempLogin: async (tempToken: string): Promise<AuthResponse> => {
+    const response = await apiClient.post<AuthResponse>("/auth/temp-login", {
+      tempToken,
+    });
+
+    // 토큰 저장
+    if (response.accessToken) {
+      tokenStorage.setAccessToken(response.accessToken);
+    }
+    if (response.refreshToken) {
+      tokenStorage.setRefreshToken(response.refreshToken);
+    }
+
+    return response;
+  },
 };

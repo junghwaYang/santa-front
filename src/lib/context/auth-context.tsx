@@ -9,6 +9,7 @@ interface AuthContextType {
   isLoading: boolean;
   isLoggedIn: boolean;
   login: (provider: "kakao" | "google", accessToken: string) => Promise<void>;
+  tempLogin: () => Promise<void>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
 }
@@ -26,7 +27,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(userData);
       }
     } catch (error) {
-      console.error("Failed to refresh user:", error);
+      console.error("Failed to refresh user:", error instanceof Error ? error.message : error);
       tokenStorage.clearTokens();
       setUser(null);
     }
@@ -46,6 +47,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(response.user);
   };
 
+  const tempLogin = async () => {
+    const { tempToken } = await authApi.getTempToken();
+    const response = await authApi.tempLogin(tempToken);
+    setUser(response.user);
+  };
+
   const logout = async () => {
     await authApi.logout();
     setUser(null);
@@ -58,6 +65,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isLoading,
         isLoggedIn: !!user,
         login,
+        tempLogin,
         logout,
         refreshUser,
       }}

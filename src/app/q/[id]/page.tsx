@@ -190,8 +190,10 @@ export default function QuestionnairePage() {
       // Redirect to done page
       router.push(`/q/${uniqueLink}/done`);
     } catch (err) {
-      console.error("Failed to submit:", err);
-      toast.error("제출에 실패했습니다. 다시 시도해주세요.");
+      console.error("Failed to submit:", err instanceof Error ? err.message : JSON.stringify(err));
+      const errorMessage =
+        (err as { message?: string })?.message || "제출에 실패했습니다. 다시 시도해주세요.";
+      toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
     }

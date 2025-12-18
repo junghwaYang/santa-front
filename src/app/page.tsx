@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Snowflake } from "lucide-react";
@@ -10,7 +10,8 @@ import { googleLogin } from "@/lib/oauth/google";
 
 export default function Home() {
   const router = useRouter();
-  const { isLoggedIn, isLoading } = useAuth();
+  const { isLoggedIn, isLoading, tempLogin } = useAuth();
+  const [isTestLoading, setIsTestLoading] = useState(false);
 
   useEffect(() => {
     initKakao();
@@ -28,6 +29,19 @@ export default function Home() {
 
   const handleGoogleLogin = () => {
     googleLogin();
+  };
+
+  const handleTestLogin = async () => {
+    try {
+      setIsTestLoading(true);
+      await tempLogin();
+      router.push("/my");
+    } catch (error) {
+      console.error("테스트 로그인 실패:", error instanceof Error ? error.message : error);
+      alert("테스트 로그인에 실패했습니다.");
+    } finally {
+      setIsTestLoading(false);
+    }
   };
 
   return (
@@ -108,6 +122,28 @@ export default function Home() {
               </svg>
               Google로 계속하기
             </Button>
+
+            {/* Test Login for Kakao AdFit Review */}
+            <div className="pt-2 border-t border-border/30">
+              <Button
+                variant="ghost"
+                className="w-full h-10 text-muted-foreground/60 font-medium text-sm rounded-xl flex items-center justify-center gap-2 hover:bg-muted/30"
+                onClick={handleTestLogin}
+                disabled={isTestLoading}
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  aria-hidden="true"
+                >
+                  <path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+                {isTestLoading ? "로그인 중..." : "테스트 계정(dev)"}
+              </Button>
+            </div>
           </div>
         </div>
       </main>

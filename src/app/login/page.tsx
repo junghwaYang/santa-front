@@ -1,8 +1,30 @@
+"use client";
+
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
+import { useAuth } from "@/lib/context/auth-context";
 
 export default function LoginPage() {
+  const router = useRouter();
+  const { tempLogin } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleTestLogin = async () => {
+    try {
+      setIsLoading(true);
+      await tempLogin();
+      router.push("/create");
+    } catch (error) {
+      console.error("테스트 로그인 실패:", error instanceof Error ? error.message : error);
+      alert("테스트 로그인에 실패했습니다.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col max-w-md mx-auto relative shadow-2xl overflow-hidden min-h-screen bg-transparent">
       <header className="p-4 flex items-center relative z-10">
@@ -66,6 +88,28 @@ export default function LoginPage() {
               Google로 계속하기
             </Link>
           </Button>
+
+          {/* Test Login for Kakao AdFit Review */}
+          <div className="pt-4 border-t border-border/50">
+            <Button
+              variant="outline"
+              className="w-full h-12 bg-muted/50 hover:bg-muted text-muted-foreground font-medium text-sm rounded-xl flex items-center justify-center gap-2"
+              onClick={handleTestLogin}
+              disabled={isLoading}
+            >
+              <svg
+                viewBox="0 0 24 24"
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                aria-hidden="true"
+              >
+                <path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+              {isLoading ? "로그인 중..." : "테스트 계정(dev)"}
+            </Button>
+          </div>
         </div>
       </main>
     </div>
