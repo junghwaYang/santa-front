@@ -8,6 +8,8 @@ import { useAuth } from "@/lib/context/auth-context";
 import { initKakao, kakaoLogin } from "@/lib/oauth/kakao";
 import { googleLogin } from "@/lib/oauth/google";
 
+const isDevMode = process.env.NEXT_PUBLIC_DEV_MODE === "true";
+
 export default function Home() {
   const router = useRouter();
   const { isLoggedIn, isLoading, tempLogin } = useAuth();
@@ -124,26 +126,28 @@ export default function Home() {
             </Button>
 
             {/* Test Login for Kakao AdFit Review */}
-            <div className="pt-2 border-t border-border/30">
-              <Button
-                variant="ghost"
-                className="w-full h-10 text-muted-foreground/60 font-medium text-sm rounded-xl flex items-center justify-center gap-2 hover:bg-muted/30"
-                onClick={handleTestLogin}
-                disabled={isTestLoading}
-              >
-                <svg
-                  viewBox="0 0 24 24"
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  aria-hidden="true"
+            {isDevMode && (
+              <div className="pt-2 border-t border-border/30">
+                <Button
+                  variant="ghost"
+                  className="w-full h-10 text-muted-foreground/60 font-medium text-sm rounded-xl flex items-center justify-center gap-2 hover:bg-muted/30"
+                  onClick={handleTestLogin}
+                  disabled={isTestLoading}
                 >
-                  <path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                </svg>
-                {isTestLoading ? "로그인 중..." : "테스트 계정(dev)"}
-              </Button>
-            </div>
+                  <svg
+                    viewBox="0 0 24 24"
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    aria-hidden="true"
+                  >
+                    <path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
+                  {isTestLoading ? "로그인 중..." : "테스트 계정(dev)"}
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </main>
