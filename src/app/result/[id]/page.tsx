@@ -16,7 +16,7 @@ export default function ResultPage() {
   const params = useParams();
   const router = useRouter();
   const userId = params.id as string;
-  const { user } = useAuth();
+  const { user, isLoading: isAuthLoading } = useAuth();
 
   const [resultData, setResultData] = useState<ResultResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -28,7 +28,26 @@ export default function ResultPage() {
 
   const captureRef = useRef<HTMLDivElement>(null);
 
+  // 본인 확인: 로그인하지 않았거나 본인이 아니면 접근 불가
+  const isOwner = user?.userId === userId;
+
   useEffect(() => {
+    // 인증 로딩 중이면 대기
+    if (isAuthLoading) return;
+
+    // 로그인하지 않은 경우 메인으로 리다이렉트
+    if (!user) {
+      router.replace("/");
+      return;
+    }
+
+    // 본인이 아닌 경우
+    if (!isOwner) {
+      setError("본인의 결과만 확인할 수 있습니다.");
+      setIsLoading(false);
+      return;
+    }
+
     const loadResult = async () => {
       try {
         setIsLoading(true);
@@ -49,7 +68,7 @@ export default function ResultPage() {
       }
     };
     loadResult();
-  }, [userId]);
+  }, [userId, user, isOwner, isAuthLoading, router]);
 
   const totalPages = resultData ? Math.ceil(resultData.warmMessages.length / MESSAGES_PER_PAGE) : 0;
   const currentMessages = resultData
@@ -102,8 +121,8 @@ export default function ResultPage() {
     }
   };
 
-  // 로딩 상태
-  if (isLoading) {
+  // 로딩 상태 (인증 로딩 또는 결과 로딩)
+  if (isAuthLoading || isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center space-y-4">
