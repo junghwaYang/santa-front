@@ -3,6 +3,12 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Snowflake } from "lucide-react";
 import { useAuth } from "@/lib/context/auth-context";
 import { initKakao, kakaoLogin } from "@/lib/oauth/kakao";
@@ -10,10 +16,13 @@ import { googleLogin } from "@/lib/oauth/google";
 
 const isDevMode = process.env.NEXT_PUBLIC_DEV_MODE === "true";
 
+type ModalType = "privacy" | "terms" | null;
+
 export default function Home() {
   const router = useRouter();
   const { isLoggedIn, isLoading, tempLogin } = useAuth();
   const [isTestLoading, setIsTestLoading] = useState(false);
+  const [openModal, setOpenModal] = useState<ModalType>(null);
 
   useEffect(() => {
     initKakao();
@@ -125,6 +134,25 @@ export default function Home() {
               Google로 계속하기
             </Button>
 
+            {/* 약관 동의 안내 */}
+            <p className="text-xs text-muted-foreground/60 text-center pt-2">
+              로그인 시{" "}
+              <button
+                onClick={() => setOpenModal("terms")}
+                className="underline hover:text-foreground transition-colors"
+              >
+                이용약관
+              </button>{" "}
+              및{" "}
+              <button
+                onClick={() => setOpenModal("privacy")}
+                className="underline hover:text-foreground transition-colors"
+              >
+                개인정보처리방침
+              </button>
+              에 동의하는 것으로 간주됩니다.
+            </p>
+
             {/* Test Login for Kakao AdFit Review */}
             {isDevMode && (
               <div className="pt-2 border-t border-border/30">
@@ -152,9 +180,94 @@ export default function Home() {
         </div>
       </main>
 
-      <footer className="absolute bottom-6 text-xs text-center text-muted-foreground/60">
-        © 2025 Santa Project. All rights reserved.
+      <footer className="absolute bottom-6 text-xs text-center text-muted-foreground/60 space-y-2">
+
+        <p>© 2025 Santa Project. All rights reserved.</p>
       </footer>
+
+      {/* 개인정보처리방침 모달 */}
+      <Dialog open={openModal === "privacy"} onOpenChange={() => setOpenModal(null)}>
+        <DialogContent className="max-w-md max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>개인정보처리방침</DialogTitle>
+          </DialogHeader>
+          <div className="text-sm text-muted-foreground space-y-4 leading-relaxed">
+            <p>
+              <strong>1. 수집하는 개인정보</strong>
+              <br />
+              본 서비스는 소셜 로그인(카카오, 구글)을 통해 다음 정보를 수집합니다:
+              이름(닉네임), 이메일
+            </p>
+            <p>
+              <strong>2. 개인정보의 수집 및 이용목적</strong>
+              <br />
+              - 서비스 제공 및 회원 식별
+              <br />
+              - 설문 결과 저장 및 공유 기능 제공
+              <br />- 서비스 개선 및 통계 분석
+            </p>
+            <p>
+              <strong>3. 개인정보의 보유 및 이용기간</strong>
+              <br />
+              회원 탈퇴 시 또는 서비스 종료 시까지 보관하며, 이후 지체 없이 파기합니다.
+            </p>
+            <p>
+              <strong>4. 개인정보의 제3자 제공</strong>
+              <br />
+              본 서비스는 이용자의 개인정보를 제3자에게 제공하지 않습니다.
+            </p>
+            <p>
+              <strong>5. 문의</strong>
+              <br />
+              개인정보 관련 문의사항은 devroder@naver.com 로 연락주시길 바랍니다.
+            </p>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* 이용약관 모달 */}
+      <Dialog open={openModal === "terms"} onOpenChange={() => setOpenModal(null)}>
+        <DialogContent className="max-w-md max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>이용약관</DialogTitle>
+          </DialogHeader>
+          <div className="text-sm text-muted-foreground space-y-4 leading-relaxed">
+            <p>
+              <strong>제1조 (목적)</strong>
+              <br />
+              본 약관은 &quot;2025 산타 테스트&quot; 서비스 이용에 관한 조건과 절차를 규정함을
+              목적으로 합니다.
+            </p>
+            <p>
+              <strong>제2조 (서비스 내용)</strong>
+              <br />
+              - 친구들의 설문을 통한 크리스마스 캐릭터 결과 제공
+              <br />
+              - 설문 링크 공유 및 저장 기능
+              <br />- 따뜻한 메시지 전달 기능
+            </p>
+            <p>
+              <strong>제3조 (이용자의 의무)</strong>
+              <br />
+              - 타인의 권리를 침해하는 행위 금지
+              <br />
+              - 욕설, 비방, 성희롱 등 부적절한 메시지 작성 금지
+              <br />- 서비스의 정상적인 운영을 방해하는 행위 금지
+            </p>
+            <p>
+              <strong>제4조 (서비스 변경 및 중단)</strong>
+              <br />
+              운영자는 필요한 경우 서비스의 전부 또는 일부를 변경하거나 중단할 수 있습니다.
+            </p>
+            <p>
+              <strong>제5조 (면책)</strong>
+              <br />
+              본 서비스는 무료로 제공되며, 서비스 이용으로 인해 발생하는 손해에 대해 운영자는
+              책임을 지지 않습니다.
+            </p>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
