@@ -227,7 +227,7 @@ export default function ResultPage() {
                   key={questionId}
                   className="bg-white/5 p-6 rounded-2xl border border-white/5 hover:bg-white/10 transition-colors"
                 >
-                  <h4 className="text-gray-400 font-medium mb-4 text-sm">{stat.question}</h4>
+                  <h4 className="text-white font-semibold mb-4 text-base shadow-sm drop-shadow-sm">{stat.question}</h4>
 
                   <div className="space-y-4">
                     {/* 1st Place */}
@@ -237,7 +237,7 @@ export default function ResultPage() {
                           <div className="flex items-center gap-2">
                             <span className="text-gold font-bold text-lg">{stat.first.text}</span>
                           </div>
-                          <span className="font-medium text-white/50 text-sm">
+                          <span className="font-bold text-white text-base">
                             {stat.first.percentage}%
                           </span>
                         </div>
@@ -259,7 +259,7 @@ export default function ResultPage() {
                               {stat.second.text}
                             </span>
                           </div>
-                          <span className="font-medium text-white/30 text-sm">
+                          <span className="font-medium text-white/70 text-sm">
                             {stat.second.percentage}%
                           </span>
                         </div>
