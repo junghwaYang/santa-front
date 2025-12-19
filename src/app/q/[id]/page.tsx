@@ -88,6 +88,8 @@ export default function QuestionnairePage() {
     const loadData = async () => {
       try {
         setIsLoadingData(true);
+
+        // 1. 사용자 정보와 질문 목록 로드
         const [userResponse, questionsResponse] = await Promise.all([
           usersApi.getUserByLink(uniqueLink),
           questionsApi.getQuestions(),
@@ -95,6 +97,24 @@ export default function QuestionnairePage() {
         setUserName(userResponse.name);
         setUserId(userResponse.userId);
         setQuestions(questionsResponse.questions);
+
+        // 2. 응답 가능 여부 확인
+        try {
+          await responsesApi.checkCanRespond(userResponse.userId);
+          // 성공하면 응답 가능
+        } catch (checkErr) {
+          const checkError = checkErr as { status?: number; message?: string };
+          if (checkError.status === 400) {
+            setError("자신에게는 응답할 수 없습니다.");
+            return;
+          } else if (checkError.status === 404) {
+            setError("존재하지 않는 사용자입니다.");
+            return;
+          } else if (checkError.status === 409) {
+            setHasAlreadySubmitted(true);
+            localStorage.setItem(`${SUBMITTED_KEY}-${uniqueLink}`, "true");
+          }
+        }
       } catch (err) {
         console.error("Failed to load data:", err);
         setError("데이터를 불러오는데 실패했습니다.");
