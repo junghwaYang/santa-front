@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { Copy, Download, ChevronLeft, ChevronRight, Gift } from "lucide-react";
+import { Share2, Download, ChevronLeft, ChevronRight, Gift } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -59,10 +59,12 @@ export default function ResultPage() {
       )
     : [];
 
-  const handleCopy = () => {
-    const link = window.location.href;
-    navigator.clipboard.writeText(link).then(() => {
-      toast.success("결과 링크가 복사되었습니다!", {
+  const handleShare = () => {
+    const shareLink = user?.uniqueLink
+      ? `${window.location.origin}/q/${user.uniqueLink}`
+      : window.location.href;
+    navigator.clipboard.writeText(shareLink).then(() => {
+      toast.success("공유 링크가 복사되었습니다!", {
         duration: 2000,
       });
     });
@@ -183,10 +185,10 @@ export default function ResultPage() {
           <div className="grid grid-cols-2 gap-3">
             <Button
               className="h-14 bg-christmas-red hover:bg-red-700 text-white flex gap-1 px-0"
-              onClick={handleCopy}
+              onClick={handleShare}
             >
-              <Copy className="w-5 h-5" />
-              <span className="text-sm font-medium">링크복사</span>
+              <Share2 className="w-5 h-5" />
+              <span className="text-sm font-medium">내 설문 링크 공유하기</span>
             </Button>
             <Button
               className="h-14 bg-christmas-red hover:bg-red-700 text-white flex gap-1 px-0"
@@ -194,7 +196,7 @@ export default function ResultPage() {
               disabled={isDownloading}
             >
               <Download className="w-5 h-5" />
-              <span className="text-sm font-medium">{isDownloading ? "저장중..." : "이미지"}</span>
+              <span className="text-sm font-medium">{isDownloading ? "저장중..." : "결과 이미지 다운로드"}</span>
             </Button>
           </div>
 
