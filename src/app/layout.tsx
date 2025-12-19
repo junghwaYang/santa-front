@@ -6,7 +6,7 @@ import { AuthProvider } from "@/lib/context/auth-context";
 
 const GTM_ID = "GTM-NSJ958FJ";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://santa-test.com";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.mysanta.shop";
 const SITE_NAME = "2025 산타 테스트";
 const SITE_TITLE = "올해의 나는 어떤 산타?";
 const SITE_DESCRIPTION =
