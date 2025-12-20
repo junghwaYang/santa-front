@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { Share2, Download, ChevronLeft, ChevronRight, Gift } from "lucide-react";
+import { Share2, Download, ChevronLeft, ChevronRight, Gift, MessageCircle } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -345,13 +345,26 @@ export default function ResultPage() {
           </Button>
         </div>
 
-        <div className="text-center pb-8 w-full flex justify-center px-4">
+        <div className="text-center pb-4 w-full flex justify-center px-4">
           <Button
             className="w-full h-16 text-xl shadow-xl rounded-xl bg-forest-green hover:bg-green-700 text-white font-bold"
             asChild
           >
             <Link href="/">나도 산타 테스트 하러가기 👉</Link>
           </Button>
+        </div>
+
+        {/* 버그 제보 및 피드백 */}
+        <div className="text-center pb-8 px-4">
+          <a
+            href="https://open.kakao.com/o/g85Jrr7h"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 text-sm text-muted-foreground/70 hover:text-muted-foreground transition-colors"
+          >
+            <MessageCircle className="w-4 h-4" />
+            버그 제보 및 피드백
+          </a>
         </div>
       </main>
     </div>
