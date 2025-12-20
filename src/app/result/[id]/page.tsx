@@ -10,7 +10,6 @@ import { toPng } from "html-to-image";
 import { resultsApi } from "@/lib/api";
 import type { ResultResponse } from "@/lib/api";
 import { useAuth } from "@/lib/context/auth-context";
-import KakaoAdfit from "@/components/kakao-adfit";
 
 export default function ResultPage() {
   const params = useParams();
@@ -353,11 +352,6 @@ export default function ResultPage() {
           >
             <Link href="/">나도 산타 테스트 하러가기 👉</Link>
           </Button>
-        </div>
-
-                {/* Kakao Adfit */}
-        <div className="flex justify-center py-4">
-          <KakaoAdfit unit="DAN-PGMxn4o8PBQp6aoL" width={320} height={100} />
         </div>
       </main>
     </div>
