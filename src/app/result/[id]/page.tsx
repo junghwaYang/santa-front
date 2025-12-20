@@ -283,7 +283,7 @@ export default function ResultPage() {
               <span className="text-sm font-medium">내 설문 링크 공유하기</span>
             </Button>
             <Button
-              className="h-14 bg-christmas-red hover:bg-red-700 text-white gap-1 px-0"
+              className="w-full h-14 bg-christmas-red hover:bg-red-700 text-white flex items-center justify-center gap-2"
               onClick={handleDownload}
               disabled={isDownloading}
             >
