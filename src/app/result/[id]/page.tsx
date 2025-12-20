@@ -283,21 +283,18 @@ export default function ResultPage() {
               <span className="text-sm font-medium">내 설문 링크 공유하기</span>
             </Button>
             <Button
-              className="h-14 bg-christmas-red hover:bg-red-700 text-white flex gap-1 px-0"
+              className="h-14 bg-christmas-red hover:bg-red-700 text-white gap-1 px-0"
               onClick={handleDownload}
               disabled={isDownloading}
             >
               {isDownloading ? (
-                <>
-                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  <span className="text-sm font-medium">저장중...</span>
-                </>
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
               ) : (
-                <>
-                  <Download className="w-5 h-5" />
-                  <span className="text-sm font-medium">결과 이미지 다운로드</span>
-                </>
+                <Download className="w-5 h-5" />
               )}
+              <span className="text-sm font-medium">
+                {isDownloading ? "저장중..." : "결과 이미지 다운로드"}
+              </span>
             </Button>
             </div>
           </div>
