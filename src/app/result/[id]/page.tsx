@@ -1,12 +1,11 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Share2, Download, ChevronLeft, ChevronRight, Gift, MessageCircle } from "lucide-react";
+import { Share2, ChevronLeft, ChevronRight, Gift, MessageCircle } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { toPng } from "html-to-image";
 import { resultsApi } from "@/lib/api";
 import type { ResultResponse } from "@/lib/api";
 import { useAuth } from "@/lib/context/auth-context";
@@ -20,23 +19,12 @@ export default function ResultPage() {
   const [resultData, setResultData] = useState<ResultResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isDownloading, setIsDownloading] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-  const [imageBase64, setImageBase64] = useState<string | null>(null);
 
   const [currentPage, setCurrentPage] = useState(1);
   const MESSAGES_PER_PAGE = 5;
 
-  const captureRef = useRef<HTMLDivElement>(null);
-
   // 본인 확인: 로그인하지 않았거나 본인이 아니면 접근 불가
   const isOwner = user?.userId === userId;
-
-  // 모바일 감지
-  useEffect(() => {
-    const checkMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    setIsMobile(checkMobile);
-  }, []);
 
   useEffect(() => {
     // 인증 로딩 중이면 대기
@@ -77,31 +65,6 @@ export default function ResultPage() {
     loadResult();
   }, [userId, user, isOwner, isAuthLoading, router]);
 
-  // 이미지를 base64로 변환 (CORS 우회)
-  useEffect(() => {
-    if (!resultData?.result.imageUrl) return;
-
-    const convertImageToBase64 = async (url: string) => {
-      try {
-        // 이미지를 fetch하여 blob으로 변환
-        const response = await fetch(url);
-        const blob = await response.blob();
-
-        // blob을 base64로 변환
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setImageBase64(reader.result as string);
-        };
-        reader.readAsDataURL(blob);
-      } catch (err) {
-        console.error("Failed to convert image to base64:", err);
-        // 실패해도 원본 이미지 URL 사용
-      }
-    };
-
-    convertImageToBase64(resultData.result.imageUrl);
-  }, [resultData?.result.imageUrl]);
-
   const totalPages = resultData ? Math.ceil(resultData.warmMessages.length / MESSAGES_PER_PAGE) : 0;
   const currentMessages = resultData
     ? resultData.warmMessages.slice(
@@ -124,68 +87,6 @@ export default function ResultPage() {
   const handlePageChange = (newPage: number) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setCurrentPage(newPage);
-    }
-  };
-
-  // Data URL을 Blob으로 변환
-  const dataUrlToBlob = (dataUrl: string): Blob => {
-    const arr = dataUrl.split(",");
-    const mime = arr[0].match(/:(.*?);/)?.[1] || "image/png";
-    const bstr = atob(arr[1]);
-    let n = bstr.length;
-    const u8arr = new Uint8Array(n);
-    while (n--) {
-      u8arr[n] = bstr.charCodeAt(n);
-    }
-    return new Blob([u8arr], { type: mime });
-  };
-
-  const handleDownload = async () => {
-    if (!captureRef.current || isDownloading) return;
-
-    try {
-      setIsDownloading(true);
-
-      // UI 렌더링을 위해 잠깐 대기
-      await new Promise((resolve) => setTimeout(resolve, 100));
-
-      const dataUrl = await toPng(captureRef.current, {
-        quality: 1,
-        pixelRatio: 2,
-        backgroundColor: "#0B132B",
-      });
-
-      if (isMobile) {
-        // 모바일: Blob URL로 새 탭에서 이미지 열기
-        const blob = dataUrlToBlob(dataUrl);
-        const blobUrl = URL.createObjectURL(blob);
-
-        // 새 탭에서 이미지 직접 열기
-        const newTab = window.open(blobUrl, "_blank");
-
-        if (!newTab) {
-          // 팝업이 차단된 경우 대체 방법: 현재 페이지에서 링크 클릭
-          const link = document.createElement("a");
-          link.href = blobUrl;
-          link.target = "_blank";
-          link.click();
-        }
-
-        // 메모리 정리 (약간의 지연 후)
-        setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
-      } else {
-        // 데스크톱: 기존 다운로드 방식
-        const link = document.createElement("a");
-        link.download = `santa-result-${resultData?.userName || "result"}.png`;
-        link.href = dataUrl;
-        link.click();
-        toast.success("이미지가 저장되었습니다!");
-      }
-    } catch (err) {
-      console.error("Failed to download image:", err);
-      toast.error("이미지 저장에 실패했습니다.");
-    } finally {
-      setIsDownloading(false);
     }
   };
 
@@ -213,15 +114,14 @@ export default function ResultPage() {
     );
   }
 
-  // base64가 있으면 사용, 없으면 원본 URL 사용
-  const characterImage = imageBase64 || resultData.result.imageUrl;
+  const characterImage = resultData.result.imageUrl;
   const questionStatsArray = Object.entries(resultData.questionStats);
 
   return (
     <div className="min-h-screen flex flex-col items-center max-w-md mx-auto relative shadow-2xl overflow-hidden bg-transparent">
       <main className="w-full animate-fade-in-up">
         {/* Character Section - Full Screen Style */}
-        <div ref={captureRef} className="w-full relative aspect-[9/16] md:aspect-[3/4] group">
+        <div className="w-full relative aspect-[9/16] md:aspect-[3/4] group">
           {/* Background Image */}
           {characterImage ? (
             <>
@@ -229,7 +129,6 @@ export default function ResultPage() {
               <img
                 src={characterImage}
                 alt="Character Result"
-                crossOrigin="anonymous"
                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
               {/* Dark Gradient Overlay for Text Readability - Only Top */}
@@ -271,35 +170,17 @@ export default function ResultPage() {
         {/* Content Section (Actions, Stats, etc.) */}
         <div className="px-4 py-8 space-y-10">
           {/* Actions */}
-          <div className="space-y-2">
-            {isMobile && (
-              <p className="text-center text-sm text-gray-400 pb-4">
-                💡 다운로드가 안될 경우 위 이미지를 캡쳐하여,<br/> 친구들에게 공유 해보세요!
-              </p>
-            )}
-            <div className="grid grid-cols-2 gap-3">
+          <div className="space-y-4">
+            <p className="text-center text-sm text-gray-400">
+              💡 이미지를 캡쳐하여 친구들과 공유하세요!
+            </p>
             <Button
-              className="h-14 bg-christmas-red hover:bg-red-700 text-white flex gap-1 px-0"
+              className="w-full h-14 bg-christmas-red hover:bg-red-700 text-white flex gap-2"
               onClick={handleShare}
             >
               <Share2 className="w-5 h-5" />
-              <span className="text-sm font-medium">내 설문 링크 공유하기</span>
+              <span className="font-medium">내 설문 링크 공유하기</span>
             </Button>
-            <Button
-              className="w-full h-14 bg-christmas-red hover:bg-red-700 text-white flex items-center justify-center gap-2"
-              onClick={handleDownload}
-              disabled={isDownloading}
-            >
-              {isDownloading ? (
-                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              ) : (
-                <Download className="w-5 h-5" />
-              )}
-              <span className="text-sm font-medium">
-                {isDownloading ? "저장중..." : "결과 이미지 다운로드"}
-              </span>
-            </Button>
-            </div>
           </div>
 
           {/* Stats Section */}
