@@ -3,6 +3,7 @@ import Script from "next/script";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/lib/context/auth-context";
+import { KakaoInAppRedirect } from "@/components/kakao-inapp-redirect";
 
 const GTM_ID = "GTM-NSJ958FJ";
 
@@ -112,6 +113,7 @@ export default function RootLayout({
             style={{ display: "none", visibility: "hidden" }}
           />
         </noscript>
+        <KakaoInAppRedirect />
         <AuthProvider>
           {children}
           <Toaster position="top-center" />
