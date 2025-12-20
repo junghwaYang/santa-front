@@ -10,6 +10,7 @@ import { ChevronLeft } from "lucide-react";
 import { toast } from "sonner";
 import { usersApi, questionsApi, responsesApi } from "@/lib/api";
 import type { Question, QuestionAnswer } from "@/lib/api";
+import { useAuth } from "@/lib/context/auth-context";
 
 const STORAGE_KEY = "santa-questionnaire";
 const SUBMITTED_KEY = "santa-submitted";
@@ -68,6 +69,7 @@ export default function QuestionnairePage() {
   const router = useRouter();
   const params = useParams();
   const uniqueLink = params.id as string;
+  const { isLoggedIn } = useAuth();
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<SelectedAnswer[]>([]);
@@ -98,21 +100,23 @@ export default function QuestionnairePage() {
         setUserId(userResponse.userId);
         setQuestions(questionsResponse.questions);
 
-        // 2. 응답 가능 여부 확인
-        try {
-          await responsesApi.checkCanRespond(userResponse.userId);
-          // 성공하면 응답 가능
-        } catch (checkErr) {
-          const checkError = checkErr as { status?: number; message?: string };
-          if (checkError.status === 400) {
-            setError("자신에게는 응답할 수 없습니다.");
-            return;
-          } else if (checkError.status === 404) {
-            setError("존재하지 않는 사용자입니다.");
-            return;
-          } else if (checkError.status === 409) {
-            setHasAlreadySubmitted(true);
-            localStorage.setItem(`${SUBMITTED_KEY}-${uniqueLink}`, "true");
+        // 2. 응답 가능 여부 확인 (로그인 상태일 때만)
+        if (isLoggedIn) {
+          try {
+            await responsesApi.checkCanRespond(userResponse.userId);
+            // 성공하면 응답 가능
+          } catch (checkErr) {
+            const checkError = checkErr as { status?: number; message?: string };
+            if (checkError.status === 400) {
+              setError("자신에게는 응답할 수 없습니다.");
+              return;
+            } else if (checkError.status === 404) {
+              setError("존재하지 않는 사용자입니다.");
+              return;
+            } else if (checkError.status === 409) {
+              setHasAlreadySubmitted(true);
+              localStorage.setItem(`${SUBMITTED_KEY}-${uniqueLink}`, "true");
+            }
           }
         }
       } catch (err) {
@@ -123,7 +127,7 @@ export default function QuestionnairePage() {
       }
     };
     loadData();
-  }, [uniqueLink]);
+  }, [uniqueLink, isLoggedIn]);
 
   // 로컬스토리지에서 저장된 답변 및 제출 여부 불러오기
   useEffect(() => {
