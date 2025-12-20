@@ -1,4 +1,3 @@
-const API_BASE_URL = "https://eymqmppcf3.execute-api.ap-northeast-2.amazonaws.com/v1";
 
 // 토큰 저장/조회 유틸리티
 const TOKEN_KEY = "santa-access-token";
@@ -94,5 +93,9 @@ class ApiClient {
     return this.request<T>(endpoint, { method: "DELETE" });
   }
 }
+
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_BASE_URL ||
+  "https://4cs3n81u9f.execute-api.ap-northeast-2.amazonaws.com/v1";
 
 export const apiClient = new ApiClient(API_BASE_URL);
