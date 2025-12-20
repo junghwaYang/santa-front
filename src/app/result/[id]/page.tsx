@@ -270,8 +270,8 @@ export default function ResultPage() {
           {/* Actions */}
           <div className="space-y-2">
             {isMobile && (
-              <p className="text-center text-sm text-gray-400">
-                💡 이미지 다운로드 시 길게 눌러서 저장하세요
+              <p className="text-center text-sm text-gray-400 pb-4">
+                💡 다운로드가 안될 경우 위 이미지를 캡쳐하여,<br/> 친구들에게 공유 해보세요!
               </p>
             )}
             <div className="grid grid-cols-2 gap-3">
