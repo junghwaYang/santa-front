@@ -56,49 +56,98 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen relative overflow-hidden flex flex-col bg-[#0B132B]">
       {/* Snowflakes Decoration */}
-      <div className="absolute top-10 left-10 opacity-20 animate-pulse">
+      <div className="absolute top-10 left-10 opacity-20 animate-pulse pointer-events-none">
         <Snowflake className="w-12 h-12 text-christmas-red" />
       </div>
-      <div className="absolute top-20 right-10 opacity-20 animate-pulse delay-700">
+      <div className="absolute top-20 right-10 opacity-20 animate-pulse delay-700 pointer-events-none">
         <Snowflake className="w-8 h-8 text-forest-green" />
       </div>
-      <div className="absolute bottom-20 left-20 opacity-20 animate-pulse delay-300">
+      <div className="absolute bottom-20 left-20 opacity-20 animate-pulse delay-300 pointer-events-none">
         <Snowflake className="w-16 h-16 text-gold" />
       </div>
 
-      <main className="w-full max-w-md flex flex-col items-center text-center space-y-10 z-10 animate-fade-in-up">
-        <div className="space-y-2">
-          <span className="text-forest-green font-bold tracking-widest text-sm uppercase mb-2 block">
-            2025 Christmas Project
-          </span>
-          <h1 className="text-4xl md:text-5xl font-extrabold text-christmas-red drop-shadow-sm flex flex-col items-center gap-3">
-            <span>올해의 나는 어떤 산타?</span>
-          </h1>
-        </div>
-
-        <div className="space-y-8 w-full px-4">
-          <p className="text-xl text-muted-foreground leading-relaxed">
-            내 친구들은 나를
-            <br />
-            <span className="font-bold text-foreground">어떻게 생각하고 있을까요?</span>
-          </p>
-
-          {/* Video GIF Placeholder */}
-          <div className="flex justify-center pb-2">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/main_move_v2.gif"
-              alt="Christmas Animation"
-              className="w-full object-cover animate-fade-in"
-            />
+      {/* Scrollable Content Area */}
+      <div className="flex-1 overflow-y-auto w-full">
+        <main className="w-full max-w-md mx-auto flex flex-col items-center text-center space-y-8 z-10 animate-fade-in-up p-4 pt-12 pb-[320px]">
+          <div className="space-y-2">
+            <span className="text-forest-green font-bold tracking-widest text-sm uppercase mb-2 block">
+              2025 Christmas Project
+            </span>
+            <h1 className="text-4xl md:text-5xl font-extrabold text-christmas-red drop-shadow-sm flex flex-col items-center gap-3">
+              <span>올해의 나는 어떤 산타?</span>
+            </h1>
           </div>
 
-          <div className="space-y-4 pt-4">
+          <div className="space-y-8 w-full">
+            <p className="text-xl text-muted-foreground leading-relaxed">
+              내 친구들은 나를
+              <br />
+              <span className="font-bold text-foreground">어떻게 생각하고 있을까요?</span>
+            </p>
+
+            {/* Video GIF Placeholder */}
+            <div className="flex justify-center pb-2">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/main_move_v2.gif"
+                alt="Christmas Animation"
+                className="w-full object-cover animate-fade-in rounded-2xl"
+              />
+            </div>
+
+            {/* Service Description Steps */}
+            <div className="w-full bg-white/5 rounded-2xl p-6 text-left space-y-5 border border-white/10 backdrop-blur-sm shadow-lg">
+              <div className="flex items-start gap-4">
+                <div className="w-6 h-6 rounded-full bg-christmas-red flex items-center justify-center shrink-0 mt-0.5 shadow-lg shadow-christmas-red/20">
+                  <span className="text-white text-sm font-bold">1</span>
+                </div>
+                <p className="text-gray-200 text-sm md:text-base leading-relaxed break-keep">
+                  <span className="text-christmas-red font-bold">로그인</span>하고 나의{" "}
+                  <span className="text-white font-bold decoration-wavy underline decoration-christmas-red/50 items-center">
+                    설문 링크
+                  </span>
+                  를 만들어요.
+                </p>
+              </div>
+
+              <div className="flex items-start gap-4">
+                <div className="w-6 h-6 rounded-full bg-forest-green flex items-center justify-center shrink-0 mt-0.5 shadow-lg shadow-forest-green/20">
+                  <span className="text-white text-sm font-bold">2</span>
+                </div>
+                <p className="text-gray-200 text-sm md:text-base leading-relaxed break-keep">
+                  링크를{" "}
+                  <span className="text-forest-green font-bold">친구들에게 공유</span>
+                  해요.
+                </p>
+              </div>
+
+              <div className="flex items-start gap-4">
+                <div className="w-6 h-6 rounded-full bg-gold flex items-center justify-center shrink-0 mt-0.5 shadow-lg shadow-gold/20">
+                  <span className="text-[#0B132B] text-sm font-bold">3</span>
+                </div>
+                <p className="text-gray-200 text-sm md:text-base leading-relaxed break-keep">
+                  친구들이{" "}
+                  <span className="text-gold font-bold">3명 이상 응답</span>하면 내
+                  캐릭터와 응답을 확인할 수 있어요!
+                </p>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+
+      {/* Fixed Bottom CTA Section */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 pointer-events-none">
+        <div className="max-w-md mx-auto relative h-full flex flex-col justify-end pointer-events-auto">
+          {/* Gradient Overlay for smooth fade */}
+          <div className="absolute inset-x-0 bottom-0 h-96 bg-gradient-to-t from-[#0B132B] via-[#0B132B] to-transparent -z-10" />
+
+          <div className="px-4 pb-8 pt-12 space-y-4">
             {/* Kakao Login */}
             <Button
-              className="w-full h-14 bg-[#FEE500] hover:bg-[#FDD835] text-[#0B132B] font-medium text-lg rounded-xl flex items-center justify-center gap-3 relative shadow-sm border border-[#FEE500]"
+              className="w-full h-14 bg-[#FEE500] hover:bg-[#FDD835] text-[#0B132B] font-medium text-lg rounded-xl flex items-center justify-center gap-3 relative shadow-lg shadow-yellow-400/10 border border-[#FEE500] transition-transform active:scale-[0.98]"
               onClick={handleKakaoLogin}
             >
               <svg viewBox="0 0 24 24" className="w-6 h-6 fill-current" aria-hidden="true">
@@ -110,7 +159,7 @@ export default function Home() {
             {/* Google Login */}
             <Button
               variant="outline"
-              className="w-full h-14 bg-white/90 hover:bg-white text-black font-medium text-lg rounded-xl flex items-center justify-center gap-3 relative shadow-sm border-0"
+              className="w-full h-14 bg-white/90 hover:bg-white text-black font-medium text-lg rounded-xl flex items-center justify-center gap-3 relative shadow-lg border-0 transition-transform active:scale-[0.98]"
               onClick={handleGoogleLogin}
             >
               <svg viewBox="0 0 24 24" className="w-6 h-6" aria-hidden="true">
@@ -135,7 +184,7 @@ export default function Home() {
             </Button>
 
             {/* 약관 동의 안내 */}
-            <p className="text-xs text-muted-foreground/60 text-center pt-2">
+            <p className="text-xs text-muted-foreground/60 text-center">
               로그인 시{" "}
               <button
                 onClick={() => setOpenModal("terms")}
@@ -176,14 +225,13 @@ export default function Home() {
                 </Button>
               </div>
             )}
+
+            <footer className="text-[10px] text-center text-muted-foreground/40 pt-2">
+              <p>© 2025 Santa Project. All rights reserved.</p>
+            </footer>
           </div>
         </div>
-      </main>
-
-      <footer className="absolute bottom-6 text-xs text-center text-muted-foreground/60 space-y-2">
-
-        <p>© 2025 Santa Project. All rights reserved.</p>
-      </footer>
+      </div>
 
       {/* 개인정보처리방침 모달 */}
       <Dialog open={openModal === "privacy"} onOpenChange={() => setOpenModal(null)}>
