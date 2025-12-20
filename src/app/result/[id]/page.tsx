@@ -235,6 +235,17 @@ export default function ResultPage() {
                         </div>
                       </div>
                     )}
+
+                    {/* 3rd & 4th Place - Text only */}
+                    {stat.results && stat.results.length > 2 && (
+                      <div className="flex flex-wrap gap-x-4 gap-y-1 pt-2">
+                        {stat.results.slice(2, 4).map((item, idx) => (
+                          <span key={item.choice} className="text-xs text-gray-400">
+                            {idx + 3}위: {item.text} ({item.percentage}%)
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}
