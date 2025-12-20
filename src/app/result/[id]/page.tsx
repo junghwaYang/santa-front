@@ -127,6 +127,19 @@ export default function ResultPage() {
     }
   };
 
+  // Data URL을 Blob으로 변환
+  const dataUrlToBlob = (dataUrl: string): Blob => {
+    const arr = dataUrl.split(",");
+    const mime = arr[0].match(/:(.*?);/)?.[1] || "image/png";
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new Blob([u8arr], { type: mime });
+  };
+
   const handleDownload = async () => {
     if (!captureRef.current || isDownloading) return;
 
@@ -140,29 +153,23 @@ export default function ResultPage() {
       });
 
       if (isMobile) {
-        // 모바일: 새 탭에서 이미지 열기 (사용자가 길게 눌러서 저장)
-        const newTab = window.open();
-        if (newTab) {
-          newTab.document.write(`
-            <!DOCTYPE html>
-            <html>
-              <head>
-                <title>산타 테스트 결과</title>
-                <meta name="viewport" content="width=device-width, initial-scale=1">
-                <style>
-                  body { margin: 0; padding: 20px; background: #0B132B; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
-                  img { max-width: 100%; height: auto; border-radius: 12px; }
-                  p { color: white; text-align: center; margin-top: 16px; font-family: sans-serif; }
-                </style>
-              </head>
-              <body>
-                <img src="${dataUrl}" alt="산타 테스트 결과" />
-                <p>이미지를 길게 눌러서 저장하세요</p>
-              </body>
-            </html>
-          `);
-          newTab.document.close();
+        // 모바일: Blob URL로 새 탭에서 이미지 열기
+        const blob = dataUrlToBlob(dataUrl);
+        const blobUrl = URL.createObjectURL(blob);
+
+        // 새 탭에서 이미지 직접 열기
+        const newTab = window.open(blobUrl, "_blank");
+
+        if (!newTab) {
+          // 팝업이 차단된 경우 대체 방법: 현재 페이지에서 링크 클릭
+          const link = document.createElement("a");
+          link.href = blobUrl;
+          link.target = "_blank";
+          link.click();
         }
+
+        // 메모리 정리 (약간의 지연 후)
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
       } else {
         // 데스크톱: 기존 다운로드 방식
         const link = document.createElement("a");
