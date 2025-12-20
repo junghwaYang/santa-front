@@ -22,6 +22,7 @@ export default function ResultPage() {
   const [error, setError] = useState<string | null>(null);
   const [isDownloading, setIsDownloading] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [imageBase64, setImageBase64] = useState<string | null>(null);
 
   const [currentPage, setCurrentPage] = useState(1);
   const MESSAGES_PER_PAGE = 5;
@@ -75,6 +76,31 @@ export default function ResultPage() {
     };
     loadResult();
   }, [userId, user, isOwner, isAuthLoading, router]);
+
+  // 이미지를 base64로 변환 (CORS 우회)
+  useEffect(() => {
+    if (!resultData?.result.imageUrl) return;
+
+    const convertImageToBase64 = async (url: string) => {
+      try {
+        // 이미지를 fetch하여 blob으로 변환
+        const response = await fetch(url);
+        const blob = await response.blob();
+
+        // blob을 base64로 변환
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setImageBase64(reader.result as string);
+        };
+        reader.readAsDataURL(blob);
+      } catch (err) {
+        console.error("Failed to convert image to base64:", err);
+        // 실패해도 원본 이미지 URL 사용
+      }
+    };
+
+    convertImageToBase64(resultData.result.imageUrl);
+  }, [resultData?.result.imageUrl]);
 
   const totalPages = resultData ? Math.ceil(resultData.warmMessages.length / MESSAGES_PER_PAGE) : 0;
   const currentMessages = resultData
@@ -177,7 +203,8 @@ export default function ResultPage() {
     );
   }
 
-  const characterImage = resultData.result.imageUrl;
+  // base64가 있으면 사용, 없으면 원본 URL 사용
+  const characterImage = imageBase64 || resultData.result.imageUrl;
   const questionStatsArray = Object.entries(resultData.questionStats);
 
   return (
@@ -192,6 +219,7 @@ export default function ResultPage() {
               <img
                 src={characterImage}
                 alt="Character Result"
+                crossOrigin="anonymous"
                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
               {/* Dark Gradient Overlay for Text Readability - Only Top */}
