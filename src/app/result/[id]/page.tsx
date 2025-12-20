@@ -238,12 +238,15 @@ export default function ResultPage() {
 
                     {/* 3rd & 4th Place - Text only */}
                     {stat.results && stat.results.length > 2 && (
-                      <div className="flex flex-wrap gap-x-4 gap-y-1 pt-2">
-                        {stat.results.slice(2, 4).map((item, idx) => (
-                          <span key={item.choice} className="text-xs text-gray-400">
-                            {idx + 3}위: {item.text} ({item.percentage}%)
-                          </span>
-                        ))}
+                      <div className="flex flex-col gap-y-1">
+                        <p className="text-xs text-gray-300 mb-2">이런면도 있다고 해요 :)</p>
+                        <div className="flex flex-wrap gap-x-4 gap-y-1">
+                          {stat.results.slice(2, 4).map((item, idx) => (
+                            <span key={item.choice} className="text-xs text-gray-300">
+                              {item.text} ({item.percentage}%)
+                            </span>
+                          ))}
+                        </div>
                       </div>
                     )}
                   </div>
