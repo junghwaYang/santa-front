@@ -146,6 +146,9 @@ export default function ResultPage() {
     try {
       setIsDownloading(true);
 
+      // UI 렌더링을 위해 잠깐 대기
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
       const dataUrl = await toPng(captureRef.current, {
         quality: 1,
         pixelRatio: 2,
