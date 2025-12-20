@@ -256,8 +256,8 @@ export default function ResultPage() {
                 </h1>
               </div>
 
-              <div className="bg-white/10 backdrop-blur-md rounded-2xl p-5 border border-white/10 shadow-lg">
-                <p className="text-gray-100 text-sm md:text-base leading-relaxed font-light break-keep opacity-95">
+              <div className="bg-black/40 backdrop-blur-md rounded-2xl p-5 border border-white/10 shadow-lg">
+                <p className="text-white text-sm md:text-base leading-relaxed font-normal break-keep drop-shadow-sm">
                   "{resultData.result.description}"
                 </p>
               </div>
