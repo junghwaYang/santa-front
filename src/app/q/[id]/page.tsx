@@ -247,6 +247,29 @@ export default function QuestionnairePage() {
     );
   }
 
+  // 이미 제출한 경우 페이지 접근 차단
+  if (hasAlreadySubmitted) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-6">
+        <div className="text-center space-y-6">
+          <div className="text-6xl">💌</div>
+          <div className="space-y-2">
+            <h1 className="text-2xl font-bold text-white">이미 메시지를 보냈어요</h1>
+            <p className="text-gray-400">
+              {userName}님에게는 한 번만 메시지를 보낼 수 있어요
+            </p>
+          </div>
+          <Button
+            onClick={() => router.push("/")}
+            className="bg-christmas-red hover:bg-[#A01830]"
+          >
+            홈으로 돌아가기
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   if (currentIndex < questions.length) {
     const question = questions[currentIndex];
     return (
