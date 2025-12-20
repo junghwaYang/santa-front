@@ -278,7 +278,12 @@ export default function QuestionnaireClient({ uniqueLink }: QuestionnaireClientP
       <div className="min-h-screen flex flex-col max-w-md mx-auto relative shadow-2xl overflow-hidden min-h-screen bg-transparent">
         <header className="p-4 flex items-center gap-4">
           {currentIndex > 0 ? (
-            <Button variant="ghost" size="icon" onClick={handleGoBack}>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleGoBack}
+              className="text-white hover:bg-white/10"
+            >
               <ChevronLeft className="w-6 h-6" />
             </Button>
           ) : (
