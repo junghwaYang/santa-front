@@ -287,8 +287,17 @@ export default function ResultPage() {
               onClick={handleDownload}
               disabled={isDownloading}
             >
-              <Download className="w-5 h-5" />
-              <span className="text-sm font-medium">{isDownloading ? "저장중..." : "결과 이미지 다운로드"}</span>
+              {isDownloading ? (
+                <>
+                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  <span className="text-sm font-medium">저장중...</span>
+                </>
+              ) : (
+                <>
+                  <Download className="w-5 h-5" />
+                  <span className="text-sm font-medium">결과 이미지 다운로드</span>
+                </>
+              )}
             </Button>
             </div>
           </div>
