@@ -21,6 +21,7 @@ export default function ResultPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isDownloading, setIsDownloading] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(1);
   const MESSAGES_PER_PAGE = 5;
@@ -29,6 +30,12 @@ export default function ResultPage() {
 
   // 본인 확인: 로그인하지 않았거나 본인이 아니면 접근 불가
   const isOwner = user?.userId === userId;
+
+  // 모바일 감지
+  useEffect(() => {
+    const checkMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    setIsMobile(checkMobile);
+  }, []);
 
   useEffect(() => {
     // 인증 로딩 중이면 대기
@@ -106,12 +113,38 @@ export default function ResultPage() {
         backgroundColor: "#0B132B",
       });
 
-      const link = document.createElement("a");
-      link.download = `santa-result-${resultData?.userName || "result"}.png`;
-      link.href = dataUrl;
-      link.click();
-
-      toast.success("이미지가 저장되었습니다!");
+      if (isMobile) {
+        // 모바일: 새 탭에서 이미지 열기 (사용자가 길게 눌러서 저장)
+        const newTab = window.open();
+        if (newTab) {
+          newTab.document.write(`
+            <!DOCTYPE html>
+            <html>
+              <head>
+                <title>산타 테스트 결과</title>
+                <meta name="viewport" content="width=device-width, initial-scale=1">
+                <style>
+                  body { margin: 0; padding: 20px; background: #0B132B; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+                  img { max-width: 100%; height: auto; border-radius: 12px; }
+                  p { color: white; text-align: center; margin-top: 16px; font-family: sans-serif; }
+                </style>
+              </head>
+              <body>
+                <img src="${dataUrl}" alt="산타 테스트 결과" />
+                <p>이미지를 길게 눌러서 저장하세요</p>
+              </body>
+            </html>
+          `);
+          newTab.document.close();
+        }
+      } else {
+        // 데스크톱: 기존 다운로드 방식
+        const link = document.createElement("a");
+        link.download = `santa-result-${resultData?.userName || "result"}.png`;
+        link.href = dataUrl;
+        link.click();
+        toast.success("이미지가 저장되었습니다!");
+      }
     } catch (err) {
       console.error("Failed to download image:", err);
       toast.error("이미지 저장에 실패했습니다.");
@@ -200,7 +233,13 @@ export default function ResultPage() {
         {/* Content Section (Actions, Stats, etc.) */}
         <div className="px-4 py-8 space-y-10">
           {/* Actions */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="space-y-2">
+            {isMobile && (
+              <p className="text-center text-sm text-gray-400">
+                💡 이미지 다운로드 시 길게 눌러서 저장하세요
+              </p>
+            )}
+            <div className="grid grid-cols-2 gap-3">
             <Button
               className="h-14 bg-christmas-red hover:bg-red-700 text-white flex gap-1 px-0"
               onClick={handleShare}
@@ -216,6 +255,7 @@ export default function ResultPage() {
               <Download className="w-5 h-5" />
               <span className="text-sm font-medium">{isDownloading ? "저장중..." : "결과 이미지 다운로드"}</span>
             </Button>
+            </div>
           </div>
 
           {/* Stats Section */}
