@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/context/auth-context";
 import { usersApi } from "@/lib/api";
 import type { UserInfo } from "@/lib/api";
+import { PWAInstallPrompt } from "@/components/pwa-install-prompt";
 
 const NICKNAME_KEY = "santa-nickname";
 
@@ -92,6 +93,9 @@ export default function MyPage() {
 
   return (
     <div className="min-h-screen flex flex-col max-w-md mx-auto relative shadow-2xl overflow-hidden bg-transparent p-6 text-center space-y-10">
+      {/* PWA Install Prompt */}
+      <PWAInstallPrompt />
+
       {/* Header / Success State */}
       <div className="space-y-6 flex flex-col items-center animate-fade-in-down">
         {/* GIF Icon */}
