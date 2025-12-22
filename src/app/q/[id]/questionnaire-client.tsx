@@ -275,7 +275,7 @@ export default function QuestionnaireClient({ uniqueLink }: QuestionnaireClientP
   if (currentIndex < questions.length) {
     const question = questions[currentIndex];
     return (
-      <div className="min-h-screen flex flex-col max-w-md mx-auto relative shadow-2xl overflow-hidden min-h-screen bg-transparent">
+      <div key={`question-${currentIndex}`} className="min-h-screen flex flex-col max-w-md mx-auto relative shadow-2xl overflow-hidden min-h-screen bg-transparent">
         <header className="p-4 flex items-center gap-4">
           {currentIndex > 0 ? (
             <Button
